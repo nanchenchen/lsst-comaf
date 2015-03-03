@@ -160,7 +160,7 @@ def make_app(trackingDbAddress):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Python script to display MAF output in a web browser."+
-                                     "  After launching, point your browser to 'http://localhost:8888/'")
+                                     "  After launching, point your browser to 'http://localhost:8989/'")
     defaultdb = os.path.join(os.getcwd(), 'trackingDb_sqlite.db')
     defaultdb = 'sqlite:///' + defaultdb
     parser.add_argument("-t", "--trackingDb", type=str, default=defaultdb, help="Tracking database dbAddress.")
