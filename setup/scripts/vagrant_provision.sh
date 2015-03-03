@@ -15,7 +15,7 @@ VENV_NAME=$(basename $PROJECT_ROOT)
 
 DBHOST=localhost
 DBPORT=3306
-DBNAME=textvisdrg
+DBNAME=lsst-ubuntu
 DBUSER=dbuser
 DBPASS=dbpass
 DBCHARSET=utf8mb4

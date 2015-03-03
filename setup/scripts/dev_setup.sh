@@ -116,8 +116,8 @@ else
 
     DATABASE_HOST=$(prompt "Hostname:" "localhost")
     DATABASE_PORT=$(prompt "Port:" "3306")
-    DATABASE_NAME=$(prompt "Database name:" "textvisdrg")
-    DATABASE_USER=$(prompt "User:" "textvisdrg")
+    DATABASE_NAME=$(prompt "Database name:" "lsst-ubuntu")
+    DATABASE_USER=$(prompt "User:" "lsst-ubuntu")
     DATABASE_PASS=$(prompt "Password:" $DATABASE_USER)
 fi
 
@@ -221,6 +221,6 @@ fab interpolate_env
 loggy "Installing additional dependencies and migrating database..."
 
 # Bring up the database
-fab migrate
+#fab migrate
 
 loggy "Development setup complete."
