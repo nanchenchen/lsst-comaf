@@ -1,0 +1,32 @@
+# Fabric
+Fabric
+
+# Django stuff
+Django>=1.7.2
+
+# Database Adapter
+MySQL-python
+
+# Templates
+django_compressor
+
+# Admin
+django-debug-toolbar
+django-docs
+
+# utils
+path.py
+django-extensions
+dj-database-url
+
+# rest api
+djangorestframework
+markdown
+django-filter
+docutils
+
+# angular
+django-angular
+
+# TextBlob
+textblob

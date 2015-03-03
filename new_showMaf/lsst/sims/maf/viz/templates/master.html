@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+
+<title>
+{% block pagetitle %}
+{{run.runName }}
+{% endblock %}
+</title>
+
+{% block css %}
+    <link rel="stylesheet" href="css/style.css"/>
+{% endblock %}
+
+{% block javascript %}
+   <script type="text/javascript" src="js/sorttable.js"></script>
+{% endblock %}
+
+</head>
+
+<body>
+
+{% set active_page = active_page|default('listRuns') -%}
+
+<div id="headerHolder">
+{% block header %}
+<div id="header">
+{%block title %}
+  OpSim Run: {{ run.runName }}
+{% endblock %}
+</div>
+{% endblock %}
+
+{% block navbar %}
+<div id="navbar">
+  {% set navigation_bar = [
+    ('/', 'listRuns', 'Run List'),
+    ('configParams', 'configs', 'Opsim Configuration'),
+    ('metricSelect', 'listMetrics', 'Metrics List'),
+    ('allMetricResults', 'allMetricResults', 'All Results'),
+    ('multiColor', 'multicolor', 'Multi Color'),
+    ('summaryStats', 'stats', 'Summary Stats')]  -%}
+ <ul class="nav">
+ {% for href, id, caption in navigation_bar %}
+   <li class="nav">
+     <a
+     {% if id == active_page %}
+       class="activenav"
+     {% else %}
+       class="nav"
+     {% endif %}
+      href="{{ href }}?runId={{runId}}">{{ caption|e }}</a>
+    </li>
+ {% endfor %}
+ </ul>
+ </div>
+{% endblock %}
+</div>
+
+
+<div id="sidebar">
+{% block moresidebar %}
+{% endblock %}
+</div>
+
+<div id="content">
+{% block content %}
+{% endblock %}
+</div>
+
+<div id="footer">
+<a
+  href="https://confluence.lsstcorp.org/display/SIM/MAF+documentation"
+  target="_blank">
+  LSST Metrics Analysis Framework (MAF)</a>
+</div>
+

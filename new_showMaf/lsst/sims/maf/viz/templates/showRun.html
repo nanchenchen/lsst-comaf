@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en" ng-app="showMaf">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/jquery-ui.js"></script>
+    <script type="text/javascript" src="../js/bootstrap.js"></script>
+    <script type="text/javascript" src="../js/angular.js"></script>
+    <script type="text/javascript" src="../js/controller.js"></script>        
+    
+    <link rel="stylesheet" href="../css/bootstrap.css" />
+    <link rel="stylesheet" href="../css/bootstrap-theme.css" />    
+    <link rel="stylesheet" href="../css/jquery-ui.css" />
+    <link rel="stylesheet" href="../css/jquery-ui.structure.css" />
+    <link rel="stylesheet" href="../css/jquery-ui.theme.css" />
+    <link rel="stylesheet" href="../css/showRun_style.css" />
+    <title></title>
+    
+    <script>
+      $(function() {
+        $( "#tabs" ).tabs();
+      });
+      </script>
+    
+</head>
+<body>
+
+
+
+<div id="filter">
+
+</div>
+   
+<div id="content" class="row" ng-controller="RunListController" >
+    
+    <div id="short_run_list" class="col-md-3">
+        <div id="header">
+            <button id="back" class="btn btn-primary">Back to List of Results</button>
+        </div>
+        <div ng-repeat="run in runs" class="row run">
+            <div class='col-md-1 runIdWrapper'>
+                <div class='mafRnnId'><span ng-bind="run.mafRunId"></span></div>
+            </div>
+            <div class='col-md-11 runBox'>
+                <div class='row'>
+                    <div class='col-md-7'>
+                        <div class='section'>MAF</div>                        
+                        <div class='mafComment'><span ng-bind="run.mafComment"></span></div>
+                    </div>
+                    <div class='col-md-4'>
+                        <div class='section'>OpSim</div>
+                        <div class='opsimRun'><span ng-bind="run.opsimRun"></span></div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+        
+    <div id="metricsWrapper" class="col-md-8" >
+        <div id="metricsHeader">
+            <div class='row'>
+                
+                <div class='section col-md-1'>MAF</div>
+                <div class='col-md-5'>
+                    <div class='mafDate'>11/11/14</div>
+                    <div class='mafComment'>maf_cadence_ops1_1122</div>
+                    <div class='mafDir'>maf_cadence/maf_cadence_ops1_1122</div>
+                </div>
+            
+                <div class='section col-md-1'>OpSim</div>
+                <div class='col-md-5'>
+                    <div class='opsimDate'>05/18/14</div>
+                    <div class='opsimRun'>ops1_1122</div>
+                    <div class='opsimComment'>10 yr, 10 cheeses w/undercheese</div>
+                </div>
+                
+            </div>            
+        </div>
+        <div id="tabs">
+            <div id="metricsNavigator">
+                <ul>
+                    <li><a href="#tabs-1">Plot Metrics</a></li>
+                    <li><a href="#tabs-2">Summary Statistics</a></li>
+                    <li><a href="#tabs-3">OpSim Config</a></li>
+                </ul>
+            </div>
+            <div id="tabs-1">
+                <div id="metrics" ng-controller="RunController" >
+                <div ng-repeat="metricGroup in metrics" class='metricGroup'>
+                    <div class='groupName'><input type='checkbox' ><span ng-bind="metricGroup.groupName"></span></div>
+                    <div ng-repeat="metricSubGroup in metricGroup.members" class='metricSubGroup'>
+                        <div class='subGroupName'><input type='checkbox' ><span ng-bind="metricSubGroup.groupName"></span></div>
+                            <div class='row metricHeader'>
+                                <div class='col-md-3'>Metric Name</div>
+                                <div class='col-md-3'>Slicer</div>
+                                <div class='col-md-3'>Metadata</div>
+                                <div class='col-md-3'>Data</div>
+                            </div>
+                        <div ng-repeat="metric in metricSubGroup.members" class="metric row">
+                             <div class='col-md-3'><input type='checkbox' ><span ng-bind="metric.MetricName"></span></div>
+                             <div class='col-md-3'><span ng-bind="metric.Slicer"></span></div>
+                             <div class='col-md-3'><span ng-bind="metric.Metadata"></span></div>
+                             <div class='col-md-3'></div>
+                        </div>
+                    
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+    
+    </div>
+    
+</div>
+    
+    
+    <div id="footer"></div>
+</body>
+</html>
