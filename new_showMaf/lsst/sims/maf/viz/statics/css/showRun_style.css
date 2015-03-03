@@ -10,22 +10,35 @@ body{
     font-family: "OpenSans";
     padding-left: 10px;
 }
+
+
 #header{
     text-align: right;
 }
 #header #back{
-    width: 92%;
+    width: 85%;
+    margin-right: 20px;
 }
 #header h1{
     font-family: "OpenSans Bold";
     color: #0071BC;
 }
+
+#short_run_list{
+    font-size: 0.3em;
+    width: 350px;
+}
+
 #long_run_list{
     width: 350px;
 }
 
 .run{
     margin: 10px 0px;
+}
+.run:hover{
+    cursor: pointer;
+    background-color: #CCE3F2;
 }
 
 .runBox{
@@ -72,6 +85,33 @@ body{
     font-family: "OpenSans Bold";
     font-size: 1.6em;
 }
+.run-contents-wrap{
+    height: 650px;
+    overflow-y: auto;
+}
+.plot-control{
+    position: relative;
+    height: 2em;
+}
+.plot-btn{
+    color: #0071BC;
+    font-size: 1.5em;
+}
+.plot-btn:hover{
+    cursor: pointer;
+}
+.show-plot{
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.hide-plot{
+    position: absolute;
+    left: 0;
+    top: 0;
+
+}
+
 
 .groupName{
     -moz-border-radius: 7px;
@@ -104,4 +144,42 @@ body{
 .metric{
     border-bottom: 1px solid #CCE3F2;
     margin: 3px 0;
+}
+.metric a {
+    color: #0071BC;
+}
+
+#plotsWrap{
+    position: relative;
+}
+#plotsWrap .metrics{
+    font-size: 0.5em;
+    width: 200px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+
+}
+#plotsWrap .plots{
+    margin-left: 220px;
+}
+#plotsWrap .metricPlot img{
+    width: 300px;
+
+}
+#plotsWrap .metric-name{
+    display: inline-block;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+#plotsWrap .metric-meta{
+    display: inline-block;
+    margin-left: 20px;
+}
+#plotsWrap .metric-data{
+    display: inline-block;
+    float: right;
+}
+#plotsWrap .metric-caption{
+
 }

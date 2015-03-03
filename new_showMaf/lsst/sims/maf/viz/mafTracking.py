@@ -53,6 +53,7 @@ class MafTracking(object):
                 mafRunId = int(mafRunId['runId'][0][0])
             if isinstance(mafRunId, list):
                 mafRunId = int(mafRunId[0])
+
         if mafRunId in self.runsPage:
             return self.runsPage[mafRunId]
         match = (self.runs['mafRunId'] == mafRunId)
@@ -60,4 +61,19 @@ class MafTracking(object):
         self.runsPage[mafRunId] = MafRunResults(mafDir)
         return self.runsPage[mafRunId]
 
+    def getRunInfo(self, mafRunId):
+        """
+        For a chosen runID, instantiate a mafRunResults object to read and handle the
+        individual run results.
+        Store this information internally.
+        """
+        if not isinstance(mafRunId, int):
+            if isinstance(mafRunId, dict):
+                mafRunId = int(mafRunId['runId'][0][0])
+            if isinstance(mafRunId, list):
+                mafRunId = int(mafRunId[0])
+
+        match = (self.runs['mafRunId'] == mafRunId)
+
+        return self.runs[match]
 

@@ -17,8 +17,10 @@
     <title></title>
     
     <script>
+        var runId = {{ runId }};
       $(function() {
-        $( "#tabs" ).tabs();
+          $( "#tabs" ).tabs();
+
       });
       </script>
     
@@ -32,47 +34,46 @@
 </div>
    
 <div id="content" class="row" ng-controller="RunListController" >
-    
-    <div id="short_run_list" class="col-md-3">
+
+    <div id="short_run_list" class="col-md-2">
         <div id="header">
             <button id="back" class="btn btn-primary">Back to List of Results</button>
         </div>
-        <div ng-repeat="run in runs" class="row run">
+        <div ng-repeat="run in runs" class="row run" ng-click="switch_run(run.mafRunId)">
             <div class='col-md-1 runIdWrapper'>
-                <div class='mafRnnId'><span ng-bind="run.mafRunId"></span></div>
+                <div class='mafRnnId'>{$ run.mafRunId $}</div>
             </div>
-            <div class='col-md-11 runBox'>
+            <div class='col-md-10 runBox'>
                 <div class='row'>
                     <div class='col-md-7'>
                         <div class='section'>MAF</div>                        
-                        <div class='mafComment'><span ng-bind="run.mafComment"></span></div>
+                        <div class='mafComment'>{$ run.mafComment $}</div>
                     </div>
                     <div class='col-md-4'>
                         <div class='section'>OpSim</div>
-                        <div class='opsimRun'><span ng-bind="run.opsimRun"></span></div>
+                        <div class='opsimRun'>{$ run.opsimRun $}</div>
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
         
-    <div id="metricsWrapper" class="col-md-8" >
+    <div id="metricsWrapper" class="col-md-8"  ng-controller="RunController"  >
         <div id="metricsHeader">
             <div class='row'>
                 
                 <div class='section col-md-1'>MAF</div>
                 <div class='col-md-5'>
-                    <div class='mafDate'>11/11/14</div>
-                    <div class='mafComment'>maf_cadence_ops1_1122</div>
-                    <div class='mafDir'>maf_cadence/maf_cadence_ops1_1122</div>
+                    <div class='mafDate'>{$ runInfo.mafDate $}</div>
+                    <div class='mafComment'>{$ runInfo.mafComment $}</div>
+                    <div class='mafDir'>{$ runInfo.mafDir $}</div>
                 </div>
             
                 <div class='section col-md-1'>OpSim</div>
                 <div class='col-md-5'>
-                    <div class='opsimDate'>05/18/14</div>
-                    <div class='opsimRun'>ops1_1122</div>
-                    <div class='opsimComment'>10 yr, 10 cheeses w/undercheese</div>
+                    <div class='opsimDate'>{$ runInfo.opsimDate $}</div>
+                    <div class='opsimRun'>{$ runInfo.opsimRun $}</div>
+                    <div class='opsimComment'>{$ runInfo.opsimComment $}</div>
                 </div>
                 
             </div>            
@@ -86,26 +87,91 @@
                 </ul>
             </div>
             <div id="tabs-1">
-                <div id="metrics" ng-controller="RunController" >
-                <div ng-repeat="metricGroup in metrics" class='metricGroup'>
-                    <div class='groupName'><input type='checkbox' ><span ng-bind="metricGroup.groupName"></span></div>
-                    <div ng-repeat="metricSubGroup in metricGroup.members" class='metricSubGroup'>
-                        <div class='subGroupName'><input type='checkbox' ><span ng-bind="metricSubGroup.groupName"></span></div>
-                            <div class='row metricHeader'>
-                                <div class='col-md-3'>Metric Name</div>
-                                <div class='col-md-3'>Slicer</div>
-                                <div class='col-md-3'>Metadata</div>
-                                <div class='col-md-3'>Data</div>
-                            </div>
-                        <div ng-repeat="metric in metricSubGroup.members" class="metric row">
-                             <div class='col-md-3'><input type='checkbox' ><span ng-bind="metric.MetricName"></span></div>
-                             <div class='col-md-3'><span ng-bind="metric.Slicer"></span></div>
-                             <div class='col-md-3'><span ng-bind="metric.Metadata"></span></div>
-                             <div class='col-md-3'></div>
-                        </div>
-                    
+                <div id="metrics">
+                <div class="plot-control">
+                    <div class="search" ng-hide="show_plots">
+                        Search: <input type="text" ng-model="search.MetricName" />
+                        <span class="glyphicon glyphicon-remove"
+                              ng-show="search.MetricName"
+                              ng-click="reset_search()"   ></span>
+
                     </div>
-                
+                    <div class="show-plot plot-btn" ng-click="plot_view(true)" ng-hide="show_plots">
+                        Plot <span class="glyphicon glyphicon-triangle-right"></span>
+                    </div>
+                    <div class="hide-plot plot-btn" ng-click="plot_view(false)" ng-show="show_plots">
+                        <span class="glyphicon glyphicon-triangle-left"></span> Back
+                    </div>
+                </div>
+                <div class="run-contents-wrap">
+                    <div id="metricsWrap" ng-hide="show_plots">
+                        <div ng-repeat="metricGroup in metrics" class='metricGroup'>
+                            <div class='groupName'><input type='checkbox' >{$ metricGroup.groupName $}</div>
+                            <div ng-repeat="metricSubGroup in metricGroup.members" class='metricSubGroup'>
+                                <div class='subGroupName'><input type='checkbox' >{$ metricSubGroup.groupName $}</div>
+                                    <div class='row metricHeader'>
+                                        <div class='col-md-3'>Metric Name</div>
+                                        <div class='col-md-3'>Slicer</div>
+                                        <div class='col-md-3'>Metadata</div>
+                                        <div class='col-md-3'>Data</div>
+                                    </div>
+                                <div ng-repeat="metric in metricSubGroup.members | filter: search" class="metric row">
+                                     <div class='col-md-3'>
+                                         <label>
+                                             <input type='checkbox' ng-model="metric.selected" > {$ metric.MetricName $}
+                                        </label>
+                                     </div>
+                                     <div class='col-md-3'>{$ metric.Slicer $}</div>
+                                     <div class='col-md-3'>{$ metric.Metadata $}</div>
+                                     <div class='col-md-3'>
+                                            <a href="/getData?datatype=npz&runId={$ runId $}&metricId={$ metric.metricId $}">npz</a> /
+                                            <a href="/getData?datatype=json&runId={$ runId $}&metricId={$ metric.metricId $}">JSON</a>
+                                     </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div id="plotsWrap"  ng-show="show_plots">
+                        <div class="metrics">
+                            <div ng-repeat="metricGroup in metrics" class='metricGroup'>
+                                <div class='groupName'>{$ metricGroup.groupName $}</div>
+                                <div ng-repeat="metricSubGroup in metricGroup.members" class='metricSubGroup'>
+                                    <div class='subGroupName'>{$ metricSubGroup.groupName $}</div>
+                                    <div ng-repeat="metric in metricSubGroup.members | filter: {selected: true}" class="metric row">
+                                        {$ metric.MetricName $}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="plots">
+                            <div ng-repeat="metricGroup in metrics" class='metricGroup-plot'>
+                                <div ng-repeat="metricSubGroup in metricGroup.members" class='metricSubGroup-plot'>
+                                    <div ng-repeat="metric in metricSubGroup.members | filter: {selected: true}" class="metric row">
+                                        <div class="metric-name">{$ metric.MetricName $}</div>
+                                        <div class="metric-meta">{$ metric.Metadata $}</div>
+                                        <div class="metric-data">
+                                            <a href="/getData?datatype=npz&runId={$ runId $}&metricId={$ metric.metricId $}">npz</a> /
+                                            <a href="/getData?datatype=json&runId={$ runId $}&metricId={$ metric.metricId $}">JSON</a>
+                                        </div>
+
+                                        <div class="metric-caption">{$ metric.caption $}</div>
+                                        <div class="metric-plots">
+                                            <span ng-repeat="plot in metric.plots" class="metricPlot">
+                                                <a href="/{$ plot.plotFile $}" target="_blank">
+                                                    <img src="/{$ plot.thumbFile $}" />
+
+                                                </a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>

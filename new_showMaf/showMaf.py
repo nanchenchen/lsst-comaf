@@ -102,7 +102,7 @@ class showRun(web.RequestHandler):
     def get(self, id):
         """Display sky maps. """
         template = env.get_template("showRun.html")
-        self.write(template.render())          
+        self.write(template.render(runId=int(id)))
         
 #REST api
 class RunListHandler(web.RequestHandler):
@@ -110,28 +110,51 @@ class RunListHandler(web.RequestHandler):
     def initialize(self, trackingDbAddress):
         self.runlist = MafTracking(trackingDbAddress)
     def get(self):
-        self.write(str([dict(zip(self.runlist.runs.dtype.names,x)) for x  in self.runlist.runs ]))
+        runs = [dict(zip(self.runlist.runs.dtype.names,x)) for x  in self.runlist.runs ]
+        for run in runs:
+            run['mafRunId'] = int(run['mafRunId'])
+        self.write(json.dumps(runs))
 
 class RunHandler(web.RequestHandler):
     """return metrics of a run in a tree-structured way in json format"""
     def initialize(self, trackingDbAddress):
         self.runlist = MafTracking(trackingDbAddress)
     def get(self, id):
-        run = self.runlist.getRun(int(id))
+        mafRun = self.runlist.getRun(int(id))
+        mafRunInfo = self.runlist.getRunInfo(int(id))
+
+        run = dict()
+        runInfo = [dict(zip(mafRunInfo.dtype.names,x)) for x  in mafRunInfo ][0]
         metrics = []
         # TODO: make this recursive so that the groups go to more/less than two levels
-        groups = run.groups.keys()
+        groups = mafRun.groups.keys()
         for g in groups:
             members = []
-            for sg in run.groups[g]:
+            for sg in mafRun.groups[g]:
                 subsetMembers = []
-                subsetMetrics = run.metricsInSubgroup(g, sg)
+                subsetMetrics = mafRun.metricsInSubgroup(g, sg)
                 for metric in subsetMetrics:
-                    metricInfo = run.metricInfo(metric)
+                    metricInfo = mafRun.metricInfo(metric)
+                    caption = mafRun.captionForMetric(metric)
+                    metricInfo['metricId'] = int(metric[0])
+                    plotInfo = mafRun.plotsForMetric(metric)
+                    plotdict = mafRun.plotDict(plotInfo)
+                    plots = []
+                    for plottype in plotdict:
+                        plots.append({
+                            'plotType': plottype,
+                            'plotFile': plotdict[plottype]['plotFile'][0],
+                            'thumbFile': plotdict[plottype]['thumbFile'][0]
+                        })
+
+                    metricInfo['plots'] = plots
+                    metricInfo['caption'] = caption
                     subsetMembers.append(json.loads(json.dumps(metricInfo)))
                 members.append({"groupName": sg, "members": subsetMembers})    
             metrics.append({"groupName": g, "members": members})
-        self.write(str(metrics))
+        run['runInfo'] = runInfo
+        run['metrics'] = metrics
+        self.write(json.dumps(run, indent=3))
         
         
         
@@ -143,6 +166,7 @@ def make_app(trackingDbAddress):
         web.url(r"/run/([0-9]*)", RunHandler, dict(trackingDbAddress=trackingDbAddress), name="run"),
         ("/showMaf", showMaf),
         web.url(r"/showRun/([0-9]*)", showRun),
+        (r"/maf_cadence/(.*)", web.StaticFileHandler, {'path': mafDbDir}),
         ("/metricSelect", MetricSelectHandler),
         ("/metricResults", MetricResultsPageHandler),
         ("/getData", DataHandler),
@@ -150,8 +174,10 @@ def make_app(trackingDbAddress):
         ("/summaryStats", StatPageHandler),
         ("/allMetricResults", AllMetricResultsPageHandler),
         ("/multiColor", MultiColorPageHandler),
+
         (r"/(favicon.ico)", web.StaticFileHandler, {'path':faviconPath}),
        # (r"/(sorttable.js)", web.StaticFileHandler, {'path':jsPath}),
+        (r"/fonts/(.*)", web.StaticFileHandler, {'path':os.path.join(mafDir, 'lsst/sims/maf/viz/statics/css/fonts')}),
         (r"/*/(.*)", web.StaticFileHandler, {'path':staticpath}),
         
         ], debug=True)
@@ -166,7 +192,7 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--trackingDb", type=str, default=defaultdb, help="Tracking database dbAddress.")
     parser.add_argument("-d", "--mafDir", type=str, default=None, help="Add this directory to the trackingDb and open immediately.")
     parser.add_argument("-c", "--mafComment", type=str, default=None, help="Add a comment to the trackingDB describing the MAF analysis of this directory (paired with mafDir argument).")
-    parser.add_argument("-p", "--port", type=int, default=8888, help="Port for connecting to showMaf.")
+    parser.add_argument("-p", "--port", type=int, default=8989, help="Port for connecting to showMaf.")
     args = parser.parse_args()
 
     # Check tracking DB is sqlite (and add as convenience if forgotten).
@@ -236,7 +262,10 @@ if __name__ == "__main__":
     env.globals.update(zip=zip)
 
     global staticpath
-    staticpath = 'lsst/sims/maf/viz/statics/'
+    staticpath = os.path.join(mafDir, 'lsst/sims/maf/viz/statics/')
+
+    global mafDbDir
+    mafDbDir = os.path.join(mafDir, 'maf_cadence/')
 
     # Start up tornado app.
     application = make_app(trackingDbAddress)

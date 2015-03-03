@@ -43,7 +43,7 @@
     </div>    
 
     <div id="short_run_list" class="col-md-6">
-        <div ng-repeat="run in runs" class="row run">
+        <div ng-repeat="run in runs" class="row run" ng-click="switch_run(run.mafRunId)">
             <div class='col-md-1 runIdWrapper'>
                 <div class='mafRnnId'><span ng-bind="run.mafRunId"></span></div>
             </div>
