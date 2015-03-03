@@ -7,7 +7,7 @@ from sqlalchemy.sql import expression
 import warnings
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", UserWarning)
-    from lib import CatalogDBObject, ChunkIterator
+    from dblib import CatalogDBObject, ChunkIterator
 
 class Table(CatalogDBObject):
     skipRegistration = True
