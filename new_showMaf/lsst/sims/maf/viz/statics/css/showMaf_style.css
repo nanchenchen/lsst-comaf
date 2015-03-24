@@ -9,14 +9,17 @@
 body{
     font-family: "OpenSans";
     padding-left: 10px;
+    overflow: hidden;
 }
-#header h1{
+#title{
     font-family: "OpenSans Bold";
     color: #0071BC;
+    font-size: 28px;
+    margin-left: 5px;
 }
 
 
-#header h1:hover, #runList th:hover{
+#title:hover, #runList th:hover{
     cursor: pointer;
 }
 #runList tbody tr:hover{
@@ -70,7 +73,7 @@ body{
     font-size: 1.6em;
 }
 .run-contents-wrap{
-    height: 650px;
+    height: 600px;
     overflow-y: auto;
 }
 .plot-control{

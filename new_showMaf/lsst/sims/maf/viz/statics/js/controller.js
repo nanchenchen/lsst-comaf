@@ -25,10 +25,10 @@
             return $scope.mode == "fullList";
         };
         $scope.listClass = function(){
-            return $scope.isFullList() ? "col-md-10" : "col-md-2 small";
+            return $scope.isFullList() ? "col-md-9 small" : "col-md-3 small";
         };
         $scope.detailsClass = function(){
-            return $scope.isFullList() ? "col-md-2" : "col-md-10";
+            return $scope.isFullList() ? "col-md-3" : "col-md-9";
         };
         $http.get('/runList')
             .success(function(data){
