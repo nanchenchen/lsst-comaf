@@ -1,19 +1,32 @@
 (function(){
-    var app = angular.module('showMaf', []);
+    var app = angular.module('showMaf', ['smart-table']);
     app.config(function ($interpolateProvider) {
         $interpolateProvider.startSymbol('{$');
         $interpolateProvider.endSymbol('$}');
     });
     app.controller('RunListController', ['$scope', '$http', function($scope, $http){
         //$scope.runs = [{'opsimComment': '10 yr, 10 cheeses w/undercheese', 'mafComment': 'maf_cadence_ops1_1122', 'opsimDate': '05/18/14', 'mafDir': 'maf_cadence/maf_cadence_ops1_1122', 'mafDate': '11/11/14', 'mafRunId': 1, 'opsimRun': 'ops1_1122'}, {'opsimComment': 'tentative baseline min Alt=20', 'mafComment': 'maf_cadence_ops1_1140', 'opsimDate': '07/29/14', 'mafDir': 'maf_cadence/maf_cadence_ops1_1140', 'mafDate': '11/10/14', 'mafRunId': 2, 'opsimRun': 'ops1_1140'}, {'opsimComment': 'tier 1 #5 min Alt=20', 'mafComment': 'maf_cadence_ops1_1141', 'opsimDate': '07/29/14', 'mafDir': 'maf_cadence/maf_cadence_ops1_1141', 'mafDate': '11/10/14', 'mafRunId': 3, 'opsimRun': 'ops1_1141'}, {'opsimComment': 'tier 1 #9 min Alt=20', 'mafComment': 'maf_cadence_ops1_1144', 'opsimDate': '07/29/14', 'mafDir': 'maf_cadence/maf_cadence_ops1_1144', 'mafDate': '11/11/14', 'mafRunId': 4, 'opsimRun': 'ops1_1144'}, {'opsimComment': 'tier 1 #10 min Alt=20', 'mafComment': 'maf_cadence_ops1_1146', 'opsimDate': '07/29/14', 'mafDir': 'maf_cadence/maf_cadence_ops1_1146', 'mafDate': '11/11/14', 'mafRunId': 5, 'opsimRun': 'ops1_1146'}, {'opsimComment': 'tier 1 #6 min Alt=20', 'mafComment': 'maf_cadence_ops1_1147', 'opsimDate': '07/29/14', 'mafDir': 'maf_cadence/maf_cadence_ops1_1147', 'mafDate': '11/10/14', 'mafRunId': 6, 'opsimRun': 'ops1_1147'}];
+        $scope.runList = [];
         $scope.runs = [];
+        $scope.mode = "fullList";
+        //$scope.mode = "showRun";
+        $scope.isFullList = function(){
+            return $scope.mode == "fullList";
+        };
+        $scope.listClass = function(){
+            return $scope.isFullList() ? "col-md-9" : "col-md-3";
+        };
+        $scope.detailsClass = function(){
+            return $scope.isFullList() ? "col-md-3" : "col-md-9";
+        };
         $http.get('/runList')
             .success(function(data){
-                $scope.runs = data;
+                $scope.runList.push.apply($scope.runList, data);
+                $scope.runs = [].concat($scope.runList);
             });
 
         $scope.switch_run = function(runId){
-            window.location.href = '/showRun/' + runId;
+            runId;
         }
         
     }]);

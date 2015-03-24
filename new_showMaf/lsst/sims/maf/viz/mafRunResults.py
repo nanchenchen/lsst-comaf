@@ -97,6 +97,7 @@ class MafRunResults(object):
             self.summaryStatOrder.append('TableFraction 1 < P')
 
         self.plotOrder = ['SkyMap', 'Histogram', 'PowerSpectrum']
+        self.meta = {}
 
 
     ## Methods to deal with metricIds

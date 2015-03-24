@@ -7,6 +7,7 @@
     <script type="text/javascript" src="js/bootstrap.js"></script>
     <script type="text/javascript" src="js/angular.js"></script>
     <script type="text/javascript" src="js/controller.js"></script>
+    <script type="text/javascript" src="js/smart-table.js"></script>
 
     <link rel="stylesheet" href="css/bootstrap.css" />
     <link rel="stylesheet" href="css/bootstrap-theme.css" />    
@@ -14,12 +15,20 @@
     <link rel="stylesheet" href="css/jquery-ui.structure.css" />
     <link rel="stylesheet" href="css/jquery-ui.theme.css" />
     <link rel="stylesheet" href="css/showMaf_style.css" />
+
+    <script>
+        var runId = 1;
+      $(function() {
+          $( "#tabs" ).tabs();
+
+      });
+      </script>
     <title></title>
     
 </head>
 <body>
 <div id="header">
-<h1>List of Results</h1>
+<h1>MAF Results</h1>
 </div>
 
 
@@ -28,46 +37,158 @@
 </div>
    
 <div id="content" class="row" ng-controller="RunListController" >
-    <div id="long_run_list" class="col-md-2">
-        <div class="row">
-            <div class="col-md-1">ID</div>
-            <div class="col-md-6">MAF</span></div>
-            <div class="col-md-4">OpSim</span></div>
-        </div>
-        <div ng-repeat="run in runs" class="row">
-            <div class="col-md-1"><span ng-bind="run.mafRunId"></span></div>
-            <div class="col-md-6"><span ng-bind="run.mafComment"></span></div>
-            <div class="col-md-4"><span ng-bind="run.opsimRun"></span></div>
-        </div>
+    <div id="runList" ng-class="listClass()">
 
-    </div>    
+        <table st-table="runs" st-safe-src="runList" class="table table-striped">
+        <thead>
+            <tr>
+                <th colspan="4"><input st-search="" class="form-control" placeholder="Search in all fields" type="text"/></th>
+			</tr>
+            <tr>
+                <th st-sort="mafRunId">Id</th>
+                <th st-sort="opsimDate" ng-if="isFullList()">Opsim Date</th>
+                <th st-sort="opsimRun">Opsim Run</th>
+                <th st-sort="opsimComment" ng-if="isFullList()">Opsim Comment</th>
+                <th st-sort="mafDate" ng-if="isFullList()">Maf Date</th>
+                <th st-sort="mafComment">Maf Comment</th>
+                <th st-sort="mafDir" ng-if="isFullList()">Maf Dir</th>
+            </tr>
+        </thead>
 
-    <div id="short_run_list" class="col-md-6">
-        <div ng-repeat="run in runs" class="row run" ng-click="switch_run(run.mafRunId)">
-            <div class='col-md-1 runIdWrapper'>
-                <div class='mafRnnId'><span ng-bind="run.mafRunId"></span></div>
-            </div>
-            <div class='col-md-11 runBox'>
-                <div class='row'>
-                    <div class='col-md-6'>
-                        <div class='section'>MAF (<span class='mafDate'><span ng-bind="run.mafDate"></span></span>) </div>
-                        <div class='mafComment'><span ng-bind="run.mafComment"></span></div>
-                    </div>
-                    <div class='col-md-6'>
-                        <div class='section'>OpSim (<span class='opsimDate'><span ng-bind="run.opsimDate"></span></span>)</div>
-                        <div class='opsimRun'><span ng-bind="run.opsimRun"></span></div>
-                        <div class='opsimComment'><span ng-bind="run.opsimComment"></span></div>
-                    </div>
-                </div>
-                <div class='row'>
-                    <div class='mafDir'>[Dir] <span ng-bind="run.mafDir"></span></div>
-                </div>
-            </div>
-            
-        </div>
+        <tbody>
+            <tr ng-repeat="run in runs" ng-click="switch_run(run.mafRunId)">
+                <td>{$ run.mafRunId $}</td>
+                <td ng-if="isFullList()">{$ run.opsimDate $}</td>
+                <td ng-if="isFullList()">{$ run.opsimRun $}</td>
+                <td>{$ run.opsimComment $}</td>
+                <td ng-if="isFullList()">{$ run.mafDate $}</td>
+                <td>{$ run.mafComment $}</td>
+                <td ng-if="isFullList()">{$ run.mafDir $}</td>
+            </tr>
+        </tbody>
+        </table>
     </div>
-        
-    <div id="example" class="col-md-3" >
+
+    <div id="example" ng-class="detailsClass()" ng-if="!isFullList()">
+        <div id="metricsWrapper" class="col-md-8"  ng-controller="RunController"  >
+        <div id="metricsHeader">
+            <div class='row'>
+
+                <div class='section col-md-1'>MAF</div>
+                <div class='col-md-5'>
+                    <div class='mafDate'>{$ runInfo.mafDate $}</div>
+                    <div class='mafComment'>{$ runInfo.mafComment $}</div>
+                    <div class='mafDir'>{$ runInfo.mafDir $}</div>
+                </div>
+
+                <div class='section col-md-1'>OpSim</div>
+                <div class='col-md-5'>
+                    <div class='opsimDate'>{$ runInfo.opsimDate $}</div>
+                    <div class='opsimRun'>{$ runInfo.opsimRun $}</div>
+                    <div class='opsimComment'>{$ runInfo.opsimComment $}</div>
+                </div>
+
+            </div>
+        </div>
+        <div id="tabs">
+            <div id="metricsNavigator">
+                <ul>
+                    <li><a href="#tabs-1">Plot Metrics</a></li>
+                    <li><a href="#tabs-2">Summary Statistics</a></li>
+                    <li><a href="#tabs-3">OpSim Config</a></li>
+                </ul>
+            </div>
+            <div id="tabs-1">
+                <div id="metrics">
+                <div class="plot-control">
+                    <div class="search" ng-hide="show_plots">
+                        Search: <input type="text" ng-model="search.MetricName" />
+                        <span class="glyphicon glyphicon-remove"
+                              ng-show="search.MetricName"
+                              ng-click="reset_search()"   ></span>
+
+                    </div>
+                    <div class="show-plot plot-btn" ng-click="plot_view(true)" ng-hide="show_plots">
+                        Plot <span class="glyphicon glyphicon-triangle-right"></span>
+                    </div>
+                    <div class="hide-plot plot-btn" ng-click="plot_view(false)" ng-show="show_plots">
+                        <span class="glyphicon glyphicon-triangle-left"></span> Back
+                    </div>
+                </div>
+                <div class="run-contents-wrap">
+                    <div id="metricsWrap" ng-hide="show_plots">
+                        <div ng-repeat="metricGroup in metrics" class='metricGroup'>
+                            <div class='groupName'><input type='checkbox' >{$ metricGroup.groupName $}</div>
+                            <div ng-repeat="metricSubGroup in metricGroup.members" class='metricSubGroup'>
+                                <div class='subGroupName'><input type='checkbox' >{$ metricSubGroup.groupName $}</div>
+                                    <div class='row metricHeader'>
+                                        <div class='col-md-3'>Metric Name</div>
+                                        <div class='col-md-3'>Slicer</div>
+                                        <div class='col-md-3'>Metadata</div>
+                                        <div class='col-md-3'>Data</div>
+                                    </div>
+                                <div ng-repeat="metric in metricSubGroup.members | filter: search" class="metric row">
+                                     <div class='col-md-3'>
+                                         <label>
+                                             <input type='checkbox' ng-model="metric.selected" > {$ metric.MetricName $}
+                                        </label>
+                                     </div>
+                                     <div class='col-md-3'>{$ metric.Slicer $}</div>
+                                     <div class='col-md-3'>{$ metric.Metadata $}</div>
+                                     <div class='col-md-3'>
+                                            <a href="/getData?datatype=npz&runId={$ runId $}&metricId={$ metric.metricId $}">npz</a> /
+                                            <a href="/getData?datatype=json&runId={$ runId $}&metricId={$ metric.metricId $}">JSON</a>
+                                     </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div id="plotsWrap"  ng-show="show_plots">
+                        <div class="metrics">
+                            <div ng-repeat="metricGroup in metrics" class='metricGroup'>
+                                <div class='groupName'>{$ metricGroup.groupName $}</div>
+                                <div ng-repeat="metricSubGroup in metricGroup.members" class='metricSubGroup'>
+                                    <div class='subGroupName'>{$ metricSubGroup.groupName $}</div>
+                                    <div ng-repeat="metric in metricSubGroup.members | filter: {selected: true}" class="metric row">
+                                        {$ metric.MetricName $}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="plots">
+                            <div ng-repeat="metricGroup in metrics" class='metricGroup-plot'>
+                                <div ng-repeat="metricSubGroup in metricGroup.members" class='metricSubGroup-plot'>
+                                    <div ng-repeat="metric in metricSubGroup.members | filter: {selected: true}" class="metric row">
+                                        <div class="metric-name">{$ metric.MetricName $}</div>
+                                        <div class="metric-meta">{$ metric.Metadata $}</div>
+                                        <div class="metric-data">
+                                            <a href="/getData?datatype=npz&runId={$ runId $}&metricId={$ metric.metricId $}">npz</a> /
+                                            <a href="/getData?datatype=json&runId={$ runId $}&metricId={$ metric.metricId $}">JSON</a>
+                                        </div>
+
+                                        <div class="metric-caption">{$ metric.caption $}</div>
+                                        <div class="metric-plots">
+                                            <span ng-repeat="plot in metric.plots" class="metricPlot">
+                                                <a href="/{$ plot.plotFile $}" target="_blank">
+                                                    <img src="/{$ plot.thumbFile $}" />
+
+                                                </a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
     </div>
     
 </div>
