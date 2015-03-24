@@ -52,10 +52,30 @@
         $scope.metrics = [];
         $scope.reset_search = function(){
             $scope.search = {'metricName': ''};
-        }
+        };
         $scope.plot_view = function(flag){
             $scope.show_plots = flag;
-        }
+        };
+        $scope.checkGroup = function(group){
+            var newValue = !$scope.updateCheckGroup(group);
+            group.members.forEach(function(d){
+                $scope.checkSubGroup(d);
+            });
+        };
+        $scope.updateCheckGroup = function(group){
+            return group.members.length == group.members.filter(function(d){ return $scope.updateCheckSubGroup(d); }).length;
+        };
+
+        $scope.checkSubGroup = function(subGroup){
+            var newValue = !$scope.updateCheckSubGroup(subGroup);
+            subGroup.members.forEach(function(d){
+                d.selected = newValue;
+            });
+        };
+        $scope.updateCheckSubGroup = function(subGroup){
+            return subGroup.members.length == subGroup.members.filter(function(d){ return d.selected; }).length;
+        };
+
         $scope.$watch('Run.runId', function() {
             $scope.runId = Run.runId;
             $scope.show_plots = false;

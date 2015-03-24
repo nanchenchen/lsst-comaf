@@ -117,9 +117,9 @@
                 <div class="run-contents-wrap">
                     <div id="metricsWrap" ng-hide="show_plots">
                         <div ng-repeat="metricGroup in metrics" class='metricGroup'>
-                            <div class='groupName'><input type='checkbox' >{$ metricGroup.groupName $}</div>
+                            <div class='groupName'><input type='checkbox'  ng-click="checkGroup(metricGroup)" ng-checked="updateCheckGroup(metricGroup)" >{$ metricGroup.groupName $}</div>
                             <div ng-repeat="metricSubGroup in metricGroup.members" class='metricSubGroup'>
-                                <div class='subGroupName'><input type='checkbox' >{$ metricSubGroup.groupName $}</div>
+                                <div class='subGroupName'><input type='checkbox' ng-click="checkSubGroup(metricSubGroup)" ng-checked="updateCheckSubGroup(metricSubGroup)" >{$ metricSubGroup.groupName $}</div>
                                     <div class='row metricHeader'>
                                         <div class='col-md-3'>Metric Name</div>
                                         <div class='col-md-3'>Slicer</div>
