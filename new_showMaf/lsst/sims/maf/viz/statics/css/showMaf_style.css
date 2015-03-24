@@ -14,49 +14,14 @@ body{
     font-family: "OpenSans Bold";
     color: #0071BC;
 }
-#long_run_list{
-    width: 350px;
-}
-
-.run{
-    margin: 10px 0px;
-}
-
-.runBox{
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-
-    -khtml-border-radius: 10px;
-    border-radius: 10px;
-    border: 1px solid #0071BC;
-    
-}
-.run .runIdWrapper{
-    width: 10px;
-}
-.run .mafRnnId{
-    padding-top: 2em;
-    text-align: right;
-    font-family: "OpenSans Bold";    
-    color: #0071BC; 
-}
-.runBox div{
-    padding: 0 5px;
-}
 
 
-.runBox  .section{
-    font-family: "OpenSans Bold";
-    color: #0071BC;
-}
-
-.runBox .mafDir{
-    color: #aaa;
-    padding-left: 10px;
-}
-
-#runList th:hover{
+#header h1:hover, #runList th:hover{
     cursor: pointer;
+}
+#runList tbody tr:hover{
+    cursor: pointer;
+    background-color: #CCE3F2;
 }
 .st-sort-ascent:after{
     content: '\25B2';
@@ -65,10 +30,28 @@ body{
 .st-sort-descent:after{
     content: '\25BC';
 }
+.animate-if.ng-enter, .animate-if.ng-leave {
+  -webkit-transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+  transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s;
+}
+
+.animate-if.ng-enter,
+.animate-if.ng-leave.ng-leave-active {
+  opacity:0;
+}
+
+.animate-if.ng-leave,
+.animate-if.ng-enter.ng-enter-active {
+  opacity:1;
+}
+.small{
+    font-size: 0.5em;
+}
+
 
 
 #metricsWrapper{
-    min-width: 900px;
+
 }
 
 #metricsHeader .section{

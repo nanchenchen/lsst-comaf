@@ -19,15 +19,15 @@
     <script>
       $(function() {
           $( "#tabs" ).tabs();
-
       });
       </script>
     <title></title>
     
 </head>
-<body>
+<body ng-controller="RunListController">
+<div id="loading" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:10000;background-color:gray;background-color:rgba(70,70,70,0.2);"><img style="position:absolute;top:50%;left:50%;" alt="" src="ajax-loader.gif" /></div>
 <div id="header">
-<h1>MAF Results</h1>
+<h1 ng-click="back_to_list()">MAF Results</h1>
 </div>
 
 
@@ -35,7 +35,7 @@
 
 </div>
    
-<div id="content" class="row" ng-controller="RunListController" >
+<div id="content" class="row">
     <div id="runList" ng-class="listClass()">
 
         <table st-table="runs" st-safe-src="runList" class="table table-striped">
@@ -45,12 +45,12 @@
 			</tr>
             <tr>
                 <th st-sort="mafRunId">Id</th>
-                <th st-sort="opsimDate" ng-if="isFullList()">Opsim Date</th>
+                <th st-sort="opsimDate" ng-if="isFullList()" class="animate-if">Opsim Date</th>
                 <th st-sort="opsimRun">Opsim Run</th>
-                <th st-sort="opsimComment" ng-if="isFullList()">Opsim Comment</th>
-                <th st-sort="mafDate" ng-if="isFullList()">Maf Date</th>
+                <th st-sort="opsimComment" ng-if="isFullList()"  class="animate-if">Opsim Comment</th>
+                <th st-sort="mafDate" ng-if="isFullList()"  class="animate-if">Maf Date</th>
                 <th st-sort="mafComment">Maf Comment</th>
-                <th st-sort="mafDir" ng-if="isFullList()">Maf Dir</th>
+                <th st-sort="mafDir" ng-if="isFullList()"  class="animate-if">Maf Dir</th>
             </tr>
         </thead>
 
@@ -58,8 +58,8 @@
             <tr ng-repeat="run in runs" ng-click="switch_run(run.mafRunId)">
                 <td>{$ run.mafRunId $}</td>
                 <td ng-if="isFullList()">{$ run.opsimDate $}</td>
-                <td ng-if="isFullList()">{$ run.opsimRun $}</td>
-                <td>{$ run.opsimComment $}</td>
+                <td>{$ run.opsimRun $}</td>
+                <td ng-if="isFullList()">{$ run.opsimComment $}</td>
                 <td ng-if="isFullList()">{$ run.mafDate $}</td>
                 <td>{$ run.mafComment $}</td>
                 <td ng-if="isFullList()">{$ run.mafDir $}</td>
@@ -68,8 +68,8 @@
         </table>
     </div>
 
-    <div id="example" ng-class="detailsClass()" ng-if="!isFullList()">
-        <div id="metricsWrapper" class="col-md-8"  ng-controller="RunController"  >
+    <div id="example" ng-class="detailsClass()" ng-hide="isFullList()">
+        <div id="metricsWrapper" ng-controller="RunController"  >
         <div id="metricsHeader">
             <div class='row'>
 

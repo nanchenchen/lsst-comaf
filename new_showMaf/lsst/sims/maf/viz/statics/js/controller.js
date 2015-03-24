@@ -25,21 +25,25 @@
             return $scope.mode == "fullList";
         };
         $scope.listClass = function(){
-            return $scope.isFullList() ? "col-md-9" : "col-md-3";
+            return $scope.isFullList() ? "col-md-10" : "col-md-2 small";
         };
         $scope.detailsClass = function(){
-            return $scope.isFullList() ? "col-md-3" : "col-md-9";
+            return $scope.isFullList() ? "col-md-2" : "col-md-10";
         };
         $http.get('/runList')
             .success(function(data){
                 $scope.runList.push.apply($scope.runList, data);
                 $scope.runs = [].concat($scope.runList);
+                $("#loading").hide();
             });
 
         $scope.switch_run = function(runId){
             Run.load(runId);
             $scope.mode = "showRun";
-        }
+        };
+        $scope.back_to_list = function(){
+            $scope.mode = "fullList";
+        };
         
     }]);
     app.controller('RunController', ['$scope', '$http', 'Run', function($scope, $http, Run){
@@ -55,11 +59,15 @@
         $scope.$watch('Run.runId', function() {
             $scope.runId = Run.runId;
             $scope.show_plots = false;
-            $http.get('/run/' + Run.runId)
-                .success(function (data) {
-                    $scope.runInfo = data.runInfo
-                    $scope.metrics = data.metrics;
-                });
+            if ( typeof(Run.runId) !== "undefined" ){
+                $("#loading").show();
+                $http.get('/run/' + Run.runId)
+                    .success(function (data) {
+                        $scope.runInfo = data.runInfo
+                        $scope.metrics = data.metrics;
+                        $("#loading").hide();
+                    });
+            }
         });
     }]); 
 })();
