@@ -75,26 +75,18 @@ body{
 }
 .plot-control{
     position: relative;
-    height: 2em;
+}
+.plot-control div{
+    display: inline-block;
 }
 .plot-btn{
     color: #0071BC;
-    font-size: 1.5em;
+    font-size: 1.2em;
 }
 .plot-btn:hover{
     cursor: pointer;
 }
-.show-plot{
-    position: absolute;
-    right: 0;
-    top: 0;
-}
-.hide-plot{
-    position: absolute;
-    left: 0;
-    top: 0;
 
-}
 
 
 .groupName{

@@ -100,18 +100,19 @@
             <div id="tabs-1">
                 <div id="metrics">
                 <div class="plot-control">
+
+                    <div class="show-plot plot-btn" ng-click="plot_view(true)" ng-hide="show_plots">
+                        Plot <span class="glyphicon glyphicon-triangle-right"></span>
+                    </div>
+                    <div class="hide-plot plot-btn" ng-click="plot_view(false)" ng-show="show_plots">
+                        <span class="glyphicon glyphicon-triangle-left"></span> Back
+                    </div>
                     <div class="search" ng-hide="show_plots">
                         Search: <input type="text" ng-model="search.MetricName" />
                         <span class="glyphicon glyphicon-remove"
                               ng-show="search.MetricName"
                               ng-click="reset_search()"   ></span>
 
-                    </div>
-                    <div class="show-plot plot-btn" ng-click="plot_view(true)" ng-hide="show_plots">
-                        Plot <span class="glyphicon glyphicon-triangle-right"></span>
-                    </div>
-                    <div class="hide-plot plot-btn" ng-click="plot_view(false)" ng-show="show_plots">
-                        <span class="glyphicon glyphicon-triangle-left"></span> Back
                     </div>
                 </div>
                 <div class="run-contents-wrap">
