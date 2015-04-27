@@ -92,6 +92,7 @@ class SummaryStatRow(Base):
         return "<SummaryStat(metricId='%d', summaryName='%s', summaryValue='%f')>" \
           %(self.metricId, self.summaryName, self.summaryValue)
 
+
 class ResultsDb(object):
     def __init__(self, outDir= '.', resultsDbAddress=None, verbose=False):
         """
@@ -107,13 +108,15 @@ class ResultsDb(object):
         else:
             self.resultsDbAddress = resultsDbAddress
         engine = create_engine(self.resultsDbAddress, echo=verbose)
-        self.Session = sessionmaker(bind=engine)
-        self.session = self.Session()
+        Session = sessionmaker(bind=engine)
+        self.session = Session()
         # Create the tables, if they don't already exist.
         try:
             Base.metadata.create_all(engine)
         except DatabaseError:
             raise ValueError("Cannot create a database at %s. Check directory exists." %(resultsDbAddress))
+
+        self.metricObjs = None
 
     def close(self):
         self.session.close()
@@ -143,7 +146,7 @@ class ResultsDb(object):
             metricMetadata = 'NULL'
         if metricDataFile is None:
             metricDataFile = 'NULL'
-        metricRun = 0;
+        metricRun = 0
         # Check if metric has already been added to database.
         prev = self.session.query(MetricRow).filter_by(metricName=metricName, slicerName=slicerName,
                                                        simDataName=simDataName, metricMetadata=metricMetadata).all()
@@ -279,3 +282,4 @@ class ResultsDb(object):
             for m in self.session.query(MetricRow).filter(MetricRow.metricId == mid).all():
                 dataFiles.append(m.metricDataFile)
         return dataFiles
+

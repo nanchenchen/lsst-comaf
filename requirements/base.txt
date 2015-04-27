@@ -35,3 +35,4 @@ textblob
 tornado
 jinja2
 SQLAlchemy
+marisa-trie

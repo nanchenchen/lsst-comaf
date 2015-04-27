@@ -47,8 +47,8 @@ class TrackingDb(object):
         engine = create_engine(self.trackingDbAddress, echo=verbose)
         if self.verbose:
             print 'Created or connected to MAF tracking database at %s' %(self.trackingDbAddress)
-        self.Session = sessionmaker(bind=engine)
-        self.session = self.Session()
+        Session = sessionmaker(bind=engine)
+        self.session = Session()
         # Create the tables, if they don't already exist.
         try:
             Base.metadata.create_all(engine)
@@ -102,3 +102,4 @@ class TrackingDb(object):
         print ' ', runinfo
         self.session.delete(runinfo[0])
         self.session.commit()
+
