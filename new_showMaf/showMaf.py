@@ -5,7 +5,7 @@ from jinja2 import Environment, FileSystemLoader
 import os, argparse
 
 
-from lsst.sims.maf.viz import MafTracking
+from lsst.sims.maf.viz import MafTracking, controller
 import lsst.sims.maf.db as db
 
 import json
@@ -94,17 +94,40 @@ class MultiColorPageHandler(web.RequestHandler):
 
 class showMaf(web.RequestHandler):
     def get(self):
-        """Display sky maps. """
         template = env.get_template("showMaf.html")
         self.write(template.render())        
 
 class showRun(web.RequestHandler):
     def get(self, id):
-        """Display sky maps. """
         template = env.get_template("showRun.html")
         self.write(template.render(runId=int(id)))
+
+class searchMetric(web.RequestHandler):
+    def get(self):
+        template = env.get_template("search.html")
+        self.write(template.render())
         
 #REST api
+class SearchHandler(web.RequestHandler):
+    """return all the runs in json format"""
+    def initialize(self, trackingDbAddress):
+        self.controller = controller.ShowMafDBController(trackingDbAddress)
+
+    def get(self):
+        list_type = self.get_argument('list_type')
+        if list_type == 'metrics':
+            results = self.controller.get_all_metrics()
+        if list_type == 'sim_data':
+            results = self.controller.get_all_sim_data()
+        if list_type == 'slicer':
+            results = self.controller.get_all_slicer()
+        self.write(json.dumps(results))
+
+    def post(self):
+        keywords = self.get_argument('keywords')
+        results = self.controller.search_metrics(json.loads(keywords))
+        self.write(json.dumps(results))
+
 class RunListHandler(web.RequestHandler):
     """return all the runs in json format"""
     def initialize(self, trackingDbAddress):
@@ -164,7 +187,9 @@ def make_app(trackingDbAddress):
         ("/", RunSelectHandler),
         web.url(r"/runList", RunListHandler, dict(trackingDbAddress=trackingDbAddress), name="runList"),
         web.url(r"/run/([0-9]*)", RunHandler, dict(trackingDbAddress=trackingDbAddress), name="run"),
+        web.url(r"/search", SearchHandler, dict(trackingDbAddress=trackingDbAddress), name="search"),
         ("/showMaf", showMaf),
+        ("/searchMetric", searchMetric),
         web.url(r"/showRun/([0-9]*)", showRun),
         (r"/maf_cadence/(.*)", web.StaticFileHandler, {'path': mafDbDir}),
         ("/metricSelect", MetricSelectHandler),

@@ -1,5 +1,4 @@
 from lsst.sims.maf.db import trackingDb, resultsDb
-import marisa_trie
 import json
 
 class MetricObj(object):
@@ -12,6 +11,12 @@ class MetricObj(object):
         self.stats = []
 
     def __repr__(self):
+        return json.dumps(self.metadata)
+
+    def __str__(self):
+        return json.dumps(self.metadata)
+
+    def to_json(self):
         return json.dumps(self.metadata)
 
 class RunObj(object):
@@ -42,6 +47,7 @@ class RunObj(object):
             metric_obj = MetricObj(metadata)
             self.metric_objs[metadata['metricId']] = metric_obj
             metric_obj.run = self
+            metric_obj.metadata['mafRunId'] = self.metadata['mafRunId']
 
         # get all plots
         plots = self.run_db.session.query(resultsDb.PlotRow).all()
@@ -59,6 +65,13 @@ class RunObj(object):
 
 class ShowMafDBController(object):
 
+    def __init__(self, tracking_db_address):
+        self.tracking_db = trackingDb.TrackingDb(trackingDbAddress=tracking_db_address)
+        self.run_objs = []
+        self.all_metrics_idx = {}
+        self.load_run_objs()
+        self.build_metric_index()
+
     def load_run_objs(self):
         self.run_objs = []
         runs = self.tracking_db.session.query(trackingDb.RunRow).all()
@@ -70,37 +83,113 @@ class ShowMafDBController(object):
             run_obj = RunObj(metadata)
             self.run_objs.append(run_obj)
 
-    def __init__(self, tracking_db_address):
-        self.tracking_db = trackingDb.TrackingDb(trackingDbAddress=tracking_db_address)
-        self.run_objs = []
-        self.load_run_objs()
-
     def build_metric_index(self):
         """
-        Using trie (a data structure) to build index tree for metrics,
-        so that searching across runs is easier
+        Building hash table index for searching.
+        The metrics will be stored in the list at the corresponding bucket.
         """
 
-        self.all_metrics_obj = []
-        self.all_metrics_idx = {}
-
-        all_metrics_name = []
-        all_metrics_slicer = []
-        #all_metrics_metadata = []
-        all_metrics_sim_data = []
-        all_metrics_tuple = []
+        self.all_metrics = []
+        self.all_metrics_idx['name'] = {}
+        self.all_metrics_idx['sim_data'] = {}
+        self.all_metrics_idx['slicer'] = {}
 
         for run_obj in self.run_objs:
             for idx in run_obj.metric_objs:
                 metric_obj = run_obj.metric_objs[idx]
-                all_metrics_name.append(metric_obj.metadata['metricName'])
-                all_metrics_slicer.append(metric_obj.metadata['slicerName'])
-                #all_metrics_metadata.append(metric_obj.metadata['metricMetadata'])
-                all_metrics_sim_data.append(metric_obj.metadata['simDataName'])
-                self.all_metrics_obj.append(metric_obj)
+                self.all_metrics.append(metric_obj)
 
-        all_metrics_tuple = map(lambda x: tuple([x]), range(len(self.all_metrics_obj)))
-        self.all_metrics_idx['name'] = marisa_trie.RecordTrie('I', zip(all_metrics_name, all_metrics_tuple))
-        self.all_metrics_idx['slicer'] = marisa_trie.RecordTrie('I', zip(all_metrics_slicer, all_metrics_tuple))
-        self.all_metrics_idx['sim_data'] = marisa_trie.RecordTrie('I', zip(all_metrics_sim_data, all_metrics_tuple))
+                # if the index not exist, init the list
+                if metric_obj.metadata['metricName'] not in self.all_metrics_idx['name']:
+                    self.all_metrics_idx['name'][metric_obj.metadata['metricName']] = []
 
+                self.all_metrics_idx['name'][metric_obj.metadata['metricName']].append(metric_obj)
+
+                # if the index not exist, init the list
+                if metric_obj.metadata['simDataName'] not in self.all_metrics_idx['sim_data']:
+                    self.all_metrics_idx['sim_data'][metric_obj.metadata['simDataName']] = []
+
+                self.all_metrics_idx['sim_data'][metric_obj.metadata['simDataName']].append(metric_obj)
+
+                # if the index not exist, init the list
+                if metric_obj.metadata['slicerName'] not in self.all_metrics_idx['slicer']:
+                    self.all_metrics_idx['slicer'][metric_obj.metadata['slicerName']] = []
+
+                self.all_metrics_idx['slicer'][metric_obj.metadata['slicerName']].append(metric_obj)
+
+    def get_all_metrics(self):
+        return map(lambda x: x.metadata, self.all_metrics)
+    def get_all_sim_data(self):
+        return self.all_metrics_idx['sim_data'].keys()
+    def get_all_slicer(self):
+        return self.all_metrics_idx['slicer'].keys()
+
+
+    def search_metrics(self, keywords):
+        """
+        given search keywords, return a list of metrics
+        :param keywords:
+
+        {
+            'name': ['metric_name_key_1', 'metric_name_key_2' ... ],
+            'sim_data': 'sim_data_name',
+            'slicer': 'slicer_name'
+        }
+        :return:
+        """
+        results = None
+
+        if keywords.get('name'):
+
+            # if this is the first seach category, initialize search results
+            if results is None:
+                results = []
+
+            # iterate through all the name index to find match metric name
+            for search_key in keywords.get('name'):
+                for name_idx in self.all_metrics_idx['name']:
+                    if name_idx.find(search_key) >= 0:
+                        results.extend(self.all_metrics_idx['name'][name_idx])
+
+
+        if keywords.get('sim_data'):
+
+
+
+            # if this is the first seach category, initialize search results
+            if results is None:
+                results = []
+                for search_key in keywords.get('sim_data'):
+                    if search_key in self.all_metrics_idx['sim_data']:
+                        results.extend(self.all_metrics_idx['sim_data'][search_key])
+
+            else:
+                new_results = []
+                for metric in results:
+                    for search_key in keywords.get('sim_data'):
+                        if search_key == metric.metadata['simDataName']:
+                            new_results.append(metric)
+                results = new_results
+
+
+        if keywords.get('slicer'):
+
+
+
+            # if this is the first seach category, initialize search results
+            if results is None:
+                results = []
+                for search_key in keywords.get('slicer'):
+                    if search_key in self.all_metrics_idx['slicer']:
+                        results.extend(self.all_metrics_idx['slicer'][search_key])
+
+            else:
+                new_results = []
+                for metric in results:
+                    for search_key in keywords.get('slicer'):
+                        if search_key == metric.metadata['slicerName']:
+                            new_results.append(metric)
+                results = new_results
+
+
+        return map(lambda x: x.metadata, results)
