@@ -21,8 +21,10 @@ class MetricObj(object):
 
     def info(self):
         results = self.metadata.copy()
-        results['plots'] = self.plots
-        results['stats'] = self.stats
+        if len(self.plots.keys()) > 0:
+            results['plots'] = self.plots
+        if len(self.stats) > 0:
+            results['stats'] = self.stats
         return results
 
 class RunObj(object):
@@ -54,6 +56,7 @@ class RunObj(object):
             self.metric_objs[metadata['metricId']] = metric_obj
             metric_obj.run = self
             metric_obj.metadata['mafRunId'] = self.metadata['mafRunId']
+            metric_obj.metadata['mafDir'] = self.metadata['mafDir']
 
         # get all plots
         plots = self.run_db.session.query(resultsDb.PlotRow).all()
@@ -198,4 +201,4 @@ class ShowMafDBController(object):
                 results = new_results
 
 
-        return map(lambda x: x.info, results)
+        return map(lambda x: x.info(), results)

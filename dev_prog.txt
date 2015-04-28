@@ -1,0 +1,9 @@
+from lsst.sims.maf.db import trackingDb, resultsDb
+trackingDbAddress='sqlite:///' + 'maf_cadence/trackingDb_sqlite.db'
+Db = trackingDb.TrackingDb(trackingDbAddress=trackingDbAddress)
+runs = Db.session.query(trackingDb.RunRow).all()
+resultsDb.ResultsDb(resultsDbAddress='sqlite:///' + runs[0].mafDir + '/resultsDb_sqlite.db')
+
+from lsst.sims.maf.viz import controller
+ctl = controller.ShowMafDBController('sqlite:///' + 'maf_cadence/trackingDb_sqlite.db')
+ctl.build_metric_index()

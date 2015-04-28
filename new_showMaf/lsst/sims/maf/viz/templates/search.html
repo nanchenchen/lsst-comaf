@@ -26,17 +26,20 @@
 
 <div id="content">
     <div id="filter">
-    <form ng-submit="search()">
+
+    <h4>Search</h4>
+    <form class='form-group'  ng-submit="search()">
         Metric Name: <br />
         <input type='text' id="name" />
-        <hr />
+        <br />
+        <br />
         OpSim Run:
             <div id="sim_data">
                 <div ng-repeat="s in sim_data">
                     <label><input type='checkbox' value="{$ s $}" /> {$ s $}</label>
                 </div>
             </div>
-        <hr />
+        <br />
         Slicer:
             <div id="slicer">
                 <div ng-repeat="s in slicer">
@@ -46,39 +49,81 @@
         <input type='submit' id="search" value="search" />
         <input type='reset' id="clear" value="reset" ng-click="reset()" />
     </form>
+        <hr />
+
+        <h4>Control</h4>
+        <label><input type="checkbox" ng-model="show_data" > Show plots/stats</label>
     </div>
+
     <div id="results">
+        <!--
+        <div id="navigator">
+            <ul>
+                <li><a href="#tabs-1">Metrics</a></li>
+                <li><a href="#tabs-2">All results</a></li>
+                <li><a href="#tabs-3">Multi-Color</a></li>
+            </ul>
+        </div>
+        -->
     <table st-table="metric_list" st-safe-src="metrics" class="table table-striped">
         <thead>
             <tr>
-                <th st-ratio="5" st-sort="mafRunId">MafRun Id</th>
-                <th st-ratio="5" st-sort="metricId">Metric Id</th>
-                <th st-ratio="15" st-sort="simDataName">Opsim Run</th>
-                <th st-ratio="15" st-sort="displayGroup">Group</th>
-                <th st-ratio="15" st-sort="displaySubGroup">Subgroup</th>
-                <th st-ratio="15" st-sort="metricName">Metric</th>
-                <th st-ratio="15" st-sort="slicerName">Slicer</th>
-                <th st-ratio="15" st-sort="metricMetadata">Meta</th>
+                <th colspan=8  class='filter-bar'>
+                    <form>
+                    <input st-search="" class="form-control filter-box" placeholder="Filter search results in all fields" type="text"/>
+                    <input type="reset" st-reset-search value="reset" class="btn btn-default" id="filter-reset">
+                    </form>
+                </th>
+			</tr>
+            <tr>
+                <th class="col-5" st-sort="mafRunId">Run Id</th>
+                <th class="col-5" st-sort="metricId">Metric Id</th>
+                <th class="col-10" st-sort="simDataName">Opsim Run</th>
+                <th class="col-10" st-sort="displayGroup">Group</th>
+                <th class="col-10" st-sort="displaySubGroup">Subgroup</th>
+                <th class="col-20" st-sort="metricName">Metric</th>
+                <th class="col-10" st-sort="slicerName">Slicer</th>
+                <th class="col-30" st-sort="metricMetadata">Meta</th>
             </tr>
         </thead>
 
-        <tbody>
-            <tr ng-repeat="metric in metric_list">
-                <td st-ratio="5">{$ metric.mafRunId $}</td>
-                <td st-ratio="5">{$ metric.metricId $}</td>
-                <td st-ratio="15">{$ metric.simDataName $}</td>
-                <td st-ratio="15">{$ metric.displayGroup $}</td>
-                <td st-ratio="15">{$ metric.displaySubGroup $}</td>
-                <td st-ratio="15">{$ metric.metricName $}</td>
-                <td st-ratio="15">{$ metric.slicerName $}</td>
-                <td st-ratio="15">{$ metric.metricMetadata $}</td>
+        <tbody ng-repeat="metric in metric_list">
 
+            <tr>
+            <td class="col-5">{$ metric.mafRunId $}</td>
+            <td class="col-5">{$ metric.metricId $}</td>
+            <td class="col-10">{$ metric.simDataName $}</td>
+            <td class="col-10">{$ metric.displayGroup $}</td>
+            <td class="col-10">{$ metric.displaySubgroup $}</td>
+            <td class="col-20">{$ metric.metricName $}</td>
+            <td class="col-10">{$ metric.slicerName $}</td>
+            <td class="col-30">{$ metric.metricMetadata $}
             </tr>
+            <tr ng-if="show_data">
+            <td class="data" colspan=8>
+                <div class="plots" ng-if="metric.plots">
+                    <div class="caption">{$ metric.displayCaption $}</div>
+                    <a ng-repeat="plot in get_plots(metric)" href="{$ get_pdf_path(metric, plot) $}" target="_blank">
+                        <img class="plot" ng-src="{$ get_thumb_path(metric, plot) $}" />
+                    </a>
+                </div>
+                <div class="stats" ng-if="metric.stats">
+                    <strong>Summary stats</strong>
+                    <div ng-repeat="stat in metric.stats" class="row">
+                        <div class="col-md-2">{$ stat.summaryName $}</div>
+                        <div class="col-md-10">{$ stat.summaryValue $}</div>
+                    </div>
+                </div>
+            </td>
+            </tr>
+
+
         </tbody>
+
         <tfoot>
             <tr>
-				<td colspan="5" class="text-center">
-					<div st-pagination="" st-items-by-page="itemsByPage" st-displayed-pages="20"></div>
+				<td colspan=8 class="search-bar text-center">
+					<div st-pagination="" st-items-by-page="itemsByPage" st-displayed-pages="15"></div>
 				</td>
 			</tr>
 		</tfoot>
