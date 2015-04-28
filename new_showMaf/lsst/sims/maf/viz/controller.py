@@ -19,6 +19,12 @@ class MetricObj(object):
     def to_json(self):
         return json.dumps(self.metadata)
 
+    def info(self):
+        results = self.metadata.copy()
+        results['plots'] = self.plots
+        results['stats'] = self.stats
+        return results
+
 class RunObj(object):
     """
     Save a run as an object
@@ -118,7 +124,7 @@ class ShowMafDBController(object):
                 self.all_metrics_idx['slicer'][metric_obj.metadata['slicerName']].append(metric_obj)
 
     def get_all_metrics(self):
-        return map(lambda x: x.metadata, self.all_metrics)
+        return map(lambda x: x.info(), self.all_metrics)
     def get_all_sim_data(self):
         return self.all_metrics_idx['sim_data'].keys()
     def get_all_slicer(self):
@@ -192,4 +198,4 @@ class ShowMafDBController(object):
                 results = new_results
 
 
-        return map(lambda x: x.metadata, results)
+        return map(lambda x: x.info, results)
