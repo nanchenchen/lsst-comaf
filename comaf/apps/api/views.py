@@ -24,10 +24,11 @@ class MetricsView(APIView):
         return Response(output.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
-        input = serializers.MetricSerializer(data=request.data)
+        input = serializers.MetricUploadSerializer(data=request.data)
         if input.is_valid():
-            data = input.validated_data
-            return Response(data, status=status.HTTP_200_OK)
+            parsed_data = input.validated_data
+            metrics_models.create_from_post(parsed_data["key"], parsed_data["data"])
+            return Response(parsed_data["data"], status=status.HTTP_200_OK)
         return Response(input.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class APIRoot(APIView):

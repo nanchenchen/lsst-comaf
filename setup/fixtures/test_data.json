@@ -1,39 +1,20 @@
 [
 {
   "fields": {
-    "key": "hashtags"
+    "username": "nanchen",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": false,
+    "is_staff": false,
+    "last_login": "2015-05-12T04:45:24Z",
+    "groups": [],
+    "user_permissions": [],
+    "password": "",
+    "email": "nanchen@uw.edu",
+    "date_joined": "2015-05-12T04:45:24Z"
   },
-  "model": "dimensions.dimensionkey",
-  "pk": 1
-},
-{
-  "fields": {
-    "key": "time"
-  },
-  "model": "dimensions.dimensionkey",
-  "pk": 2
-},
-{
-  "fields": {
-    "title": "Social Media and Global Development Rituals: a content analysis of blogs and tweets on the 2010 mdg Summit",
-    "authors": "Tobias Denskus Daniel E Esser",
-    "link": "http://nanro.org/~nanchen/social_science_papers/pdfs/Tobias%20Denskus_Daniel%20E%20Esser_2013_Social%20Media%20and%20Global%20Development%20Rituals.pdf",
-    "venue": "Third World Quarterly",
-    "year": 2013
-  },
-  "model": "questions.article",
-  "pk": 1
-},
-{
-  "fields": {
-    "source": 1,
-    "dimensions": [
-      1,
-      2
-    ],
-    "text": "What is the relationship between blog content and 1\\tweets\\ at a 2\\United Nations global conference\\?"
-  },
-  "model": "questions.question",
+  "model": "auth.user",
   "pk": 1
 },
 {
@@ -44,14 +25,22 @@
     "is_active": true,
     "is_superuser": true,
     "is_staff": true,
-    "last_login": "2015-02-20T02:24:46Z",
+    "last_login": "2015-05-12T04:45:37Z",
     "groups": [],
     "user_permissions": [],
-    "password": "pbkdf2_sha256$15000$AlPv7nVARPsp$tgERRvrc+KM3wzZ6PPTVu6xTlU+wxCUaGL1QqLh/eSo=",
+    "password": "pbkdf2_sha256$15000$S1sl0mLyF3Om$LOOi5Y6yO4+mKETUevdD1qJ7NwqEjTB48II4L1Nd7Bg=",
     "email": "",
-    "date_joined": "2015-02-10T07:16:58Z"
+    "date_joined": "2015-05-12T04:45:37Z"
   },
   "model": "auth.user",
+  "pk": 2
+},
+{
+  "fields": {
+    "user": 1,
+    "value": "43a9f261df4d1982ed8f8e4a5d318787be7648bc52eee0cfaad9c50a"
+  },
+  "model": "base.userkey",
   "pk": 1
 }
 ]

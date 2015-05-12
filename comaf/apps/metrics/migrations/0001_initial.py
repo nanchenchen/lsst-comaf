@@ -17,18 +17,13 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=200)),
-                ('maf_comment', models.TextField(default=b'', null=True, blank=True)),
+                ('opsim_run', models.CharField(max_length=200)),
                 ('opsim_comment', models.TextField(default=b'', null=True, blank=True)),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='OpSimRun',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=200)),
+                ('opsim_date', models.DateField(null=True)),
+                ('maf_comment', models.TextField(default=b'', null=True, blank=True)),
+                ('maf_date', models.DateField(null=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True, null=True)),
+                ('owner', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
             },
@@ -57,17 +52,5 @@ class Migration(migrations.Migration):
             options={
             },
             bases=(models.Model,),
-        ),
-        migrations.AddField(
-            model_name='metric',
-            name='opsim_run',
-            field=models.ForeignKey(to='metrics.OpSimRun', unique=True),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='metric',
-            name='owner',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL, unique=True),
-            preserve_default=True,
         ),
     ]
