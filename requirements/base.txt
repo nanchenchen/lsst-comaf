@@ -28,11 +28,7 @@ docutils
 # angular
 django-angular
 
-# TextBlob
-textblob
-
 # LSST
 tornado
 jinja2
 SQLAlchemy
-marisa-trie

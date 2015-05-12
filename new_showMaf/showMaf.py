@@ -5,7 +5,7 @@ from jinja2 import Environment, FileSystemLoader
 import os, argparse
 
 
-from lsst.sims.maf.viz import MafTracking, controller
+from lsst.sims.maf.viz import MafTracking, dbController
 import lsst.sims.maf.db as db
 
 import json
@@ -102,16 +102,15 @@ class showRun(web.RequestHandler):
         template = env.get_template("showRun.html")
         self.write(template.render(runId=int(id)))
 
-class searchMetric(web.RequestHandler):
+class SearchMetrics(web.RequestHandler):
     def get(self):
         template = env.get_template("search.html")
         self.write(template.render())
         
-#REST api
 class SearchHandler(web.RequestHandler):
-    """return all the runs in json format"""
+    """return metrics in json format"""
     def initialize(self, trackingDbAddress):
-        self.controller = controller.ShowMafDBController(trackingDbAddress)
+        self.controller = dbController.ShowMafDBController(trackingDbAddress)
 
     def get(self):
         list_type = self.get_argument('list_type')
@@ -189,7 +188,7 @@ def make_app(trackingDbAddress):
         web.url(r"/run/([0-9]*)", RunHandler, dict(trackingDbAddress=trackingDbAddress), name="run"),
         web.url(r"/search", SearchHandler, dict(trackingDbAddress=trackingDbAddress), name="search"),
         ("/showMaf", showMaf),
-        ("/searchMetric", searchMetric),
+        ("/searchMetrics", SearchMetrics),
         web.url(r"/showRun/([0-9]*)", showRun),
         (r"/maf_cadence/(.*)", web.StaticFileHandler, {'path': mafDbDir}),
         ("/metricSelect", MetricSelectHandler),

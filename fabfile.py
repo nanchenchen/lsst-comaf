@@ -14,7 +14,7 @@ sys.path.append(PROJECT_ROOT / 'setup')
 
 from fabutils import conf
 
-conf.configure(PROJECT_ROOT, 'msgvis')
+conf.configure(PROJECT_ROOT, 'comaf')
 
 from fabutils import factories
 from fabutils.tasks import *
@@ -35,8 +35,8 @@ def dependencies(default_env='dev'):
     npm_install()
     bower_install()
 
-test = factories.test_task(default_settings='msgvis.settings.test')
-test_coverage = factories.coverage_task(default_settings='msgvis.settings.test')
+test = factories.test_task(default_settings='comaf.settings.test')
+test_coverage = factories.coverage_task(default_settings='comaf.settings.test')
 
 test_data_path = conf.PROJECT_ROOT / 'setup' / 'fixtures' / 'test_data.json'
 make_test_data = factories.make_test_data_task(('base', 'api',  # 'corpus',
@@ -49,9 +49,9 @@ load_test_data = factories.load_test_data_task(test_data_path)
 
 # Model keys to fixture paths from PROJECT_ROOT
 model_fixtures = {
-    'corpus.Language': 'msgvis/apps/corpus/fixtures/languages.json',
-    'corpus.MessageType': 'msgvis/apps/corpus/fixtures/messagetypes.json',
-    'corpus.Timezone': 'msgvis/apps/corpus/fixtures/timezones.json',
+    #'corpus.Language': 'comaf/apps/corpus/fixtures/languages.json',
+    #'corpus.MessageType': 'comaf/apps/corpus/fixtures/messagetypes.json',
+    #'corpus.Timezone': 'comaf/apps/corpus/fixtures/timezones.json',
 }
 
 

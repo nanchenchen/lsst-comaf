@@ -17,6 +17,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # accessing "localhost:8080" will access port 80 on the guest machine.
     config.vm.network :forwarded_port, guest: 8989, host: 8989
     config.vm.network :forwarded_port, guest: 80, host: 8000
+    config.vm.network :forwarded_port, guest: 8000, host: 8080
 
     # If true, then any SSH connections made will enable agent forwarding.
     # Default value: false
