@@ -8,28 +8,17 @@ from rest_framework.views import APIView, Response
 from django.core.urlresolvers import NoReverseMatch
 from rest_framework.reverse import reverse
 from rest_framework.compat import get_resolver_match, OrderedDict
+from rest_framework.parsers import FileUploadParser
 
 import comaf.apps.metrics.models as metrics_models
 from comaf.apps.api import serializers
+import os
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-class MetricsView(APIView):
 
-    def get(self, request, format=None):
-        metrics = metrics_models.Metric.objects.all()
-        output = serializers.MetricsSerializer(metrics)
-        return Response(output.data, status=status.HTTP_200_OK)
-
-    def post(self, request, format=None):
-        input = serializers.MetricUploadSerializer(data=request.data)
-        if input.is_valid():
-            parsed_data = input.validated_data
-            metrics_models.create_from_post(parsed_data["key"], parsed_data["data"])
-            return Response(parsed_data["data"], status=status.HTTP_200_OK)
-        return Response(input.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class APIRoot(APIView):
     """
@@ -56,3 +45,36 @@ class APIRoot(APIView):
                 continue
 
         return Response(ret)
+
+class MetricsView(APIView):
+
+    def get(self, request, format=None):
+        metrics = metrics_models.Metric.objects.all()
+        output = serializers.MetricsSerializer(metrics)
+        return Response(output.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        input = serializers.MetricUploadSerializer(data=request.data)
+        if input.is_valid():
+            parsed_data = input.validated_data
+            metrics_models.create_from_post(parsed_data["key"], parsed_data["data"])
+            return Response(parsed_data["data"], status=status.HTTP_200_OK)
+        return Response(input.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PlotView(APIView):
+
+    parser_classes = (FileUploadParser, )
+
+    def post(self, request, format='png'):
+        import pdb
+        pdb.set_trace()
+        up_file = request.data['image']
+        destination = open('/tmp/plots/' + up_file.name, 'wb+')
+        for chunk in up_file.chunks():
+            destination.write(chunk)
+            destination.close()
+
+        # ...
+        # do some stuff with uploaded file
+        # ...
+        return Response(up_file.name, status.HTTP_201_CREATED)
