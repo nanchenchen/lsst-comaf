@@ -235,7 +235,7 @@ LOCAL_APPS = (
     'comaf.apps.base',
     'comaf.apps.api',
     'comaf.apps.metrics',
-    'comaf.apps.viz',
+    'comaf.apps.workspace',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
