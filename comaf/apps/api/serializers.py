@@ -35,3 +35,10 @@ class MetricUploadSerializer(serializers.Serializer):
 
 class MetricsSerializer(serializers.Serializer):
     metrics = serializers.ListField(child=MetricSerializer(), required=False)
+
+class PlotSerializer(serializers.ModelSerializer):
+    metric = MetricSerializer
+
+    class Meta:
+        model = metrics_models.Plot
+        fields = ('metric', 'type', 'src')

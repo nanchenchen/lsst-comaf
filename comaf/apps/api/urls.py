@@ -4,6 +4,7 @@ from comaf.apps.api import views
 
 api_root_urls = {
     'metrics': url(r'^metrics/$', views.MetricsView.as_view(), name='metrics'),
+    'plots': url(r'^plots/$', views.PlotView.as_view(), name='plots'),
 }
 
 urlpatterns = api_root_urls.values() + [
