@@ -65,6 +65,8 @@ target/
 *.iml
 
 *~
+*.swp
 bower_components
+comaf/static/bower
 new_showMaf/maf_cadence
 media

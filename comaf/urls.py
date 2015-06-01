@@ -8,6 +8,8 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('apps.base.urls')),
+    url(r'^metric/', include('apps.metrics.urls')),
     # REST Api urls
     url(r'^api/', include('apps.api.urls')),
+
 )

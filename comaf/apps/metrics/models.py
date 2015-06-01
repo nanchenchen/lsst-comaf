@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 import json
 import os
 from comaf.apps.base.utils.overwrite_storage import OverwriteStorage
+from django.core.urlresolvers import reverse
 
 # Create your models here.
 
@@ -31,6 +32,26 @@ class Metric(models.Model):
 
     def __unicode__(self):
         return self.owner.username + "/" + self.name + " / " + self.opsim_run.name
+
+    def get_absolute_url(self):
+        """What is the main url for this object"""
+        return reverse('project', kwargs={
+            'pk': self.pk,
+        })
+
+    def get_plots_in_order(self):
+        plots = []
+        skymap = self.plots.get(type='Skymap')
+        if skymap:
+            plots.append(skymap)
+        histogram = self.plots.get(type='Histogram')
+        if histogram:
+            plots.append(histogram)
+        query = self.plots.exclude(type='Skymap')
+        query = query.exclude(type='Histogram')
+        plots.extend(query.all())
+        return plots
+
 
 def get_image_path(instance, filename):
     return os.path.join('plots', filename)

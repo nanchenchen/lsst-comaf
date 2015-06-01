@@ -1,8 +1,8 @@
 {
-  "name": "textvisdrg",
+  "name": "lsst-comaf",
   "version": "0.1.0",
-  "homepage": "https://github.com/hds-lab/textvisdrg",
-  "description": "Prototype for exploratory visual data analysis of large social message datasets",
+  "homepage": "https://github.com/nanchenchen/lsst-comaf",
+  "description": "Prototype development for collaborative maf",
   "license": "MIT",
   "private": true,
   "ignore": [
