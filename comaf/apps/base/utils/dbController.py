@@ -1,4 +1,4 @@
-from lsst.sims.maf.db import trackingDb, resultsDb
+from comaf.apps.base.utils import trackingDb, resultsDb
 import os
 import json
 
@@ -78,7 +78,6 @@ class ShowMafDBController(object):
     def __init__(self, tracking_db_address):
         self.tracking_db = trackingDb.TrackingDb(trackingDbAddress=tracking_db_address)
         self.run_objs = []
-        self.all_metrics = []
         self.all_metrics_idx = {}
         self.load_run_objs()
         self.build_metric_index()
