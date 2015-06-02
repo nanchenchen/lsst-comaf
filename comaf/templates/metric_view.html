@@ -1,17 +1,55 @@
 {% extends "_layouts/base.html" %}
+{% load staticfiles djangular_tags %}
+
+{% block js %}
+{{ block.super }}
+<script src="{% static 'bower/angular/angular.js' %}"></script>
+<script src="{% static 'bower/angular-cookies/angular-cookies.js' %}"></script>
+<script src="{% static 'js/metric_comments.js' %}"></script>
+{% endblock %}
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/metric.less' %}" type="text/less">
+{% endblock %}
 
 {% block page_title %}Metric Details{% endblock %}
 {% block body_class %}metric-details{% endblock %}
 
 {% block content %}
-<div>{{ metric.opsim_run.name }} > {{ metric.display_group }} > {{ metric.display_subgroup }}</div>
-<h1>{{ metric.name }}</h1>
-<div>{{ metric.metadata }}</div>
-<div id="caption">{{ metric.display_caption }}</div>
-{% for plot in plots %}
-<a href="{{ MEDIA_URL }}{{ plot.src.name }}" target="_blank">
-    <img src="{{ MEDIA_URL }}{{ plot.thumb.name }}" />
-</a>
-{% endfor %}
+
+<div id="content-wrap" ng-app="metric-comments">
+    <div id="metric-wrap">
+        <div>{{ metric.opsim_run.name }} > {{ metric.display_group }} > {{ metric.display_subgroup }}</div>
+        <h1>{{ metric.name }}</h1>
+        <div>{{ metric.metadata }}</div>
+        <div id="caption">{{ metric.display_caption }}</div>
+
+        <div id="plots">
+            {% for plot in plots %}
+            <a href="{{ MEDIA_URL }}{{ plot.src.name }}" target="_blank">
+                <img src="{{ MEDIA_URL }}{{ plot.thumb.name }}" />
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div id="comment-wrap" ng-controller="CommentsController">
+        <h3>Comments</h3>
+        <div id="comments" >
+            <div class='comment-entry' ng-repeat="comment in comments">
+                <strong><span class="comment-user">{$ comment.owner.username $}</span></strong>
+                <span class="comment-time">{$ comment.created_at | date:'yyyy-MM-dd HH:mm:ss' $}</span> <br/>
+                <span class="comment-text">{$ comment.text $}</span> <br />
+            </div>
+        </div>
+        <hr />
+        <form>
+            Add a comment: <br />
+            <textarea id="new-comment" cols="50" rows="4"  class="form-control" ng-model="comment_text"></textarea> <br/>
+            <button class="btn btn-primary" ng-click="add_a_comment()">Submit</button>
+            <input type="reset" class="btn btn-defalut" value="Reset">
+        </form>
+    </div>
+</div>
+
 
 {% endblock %}

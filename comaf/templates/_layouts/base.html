@@ -22,7 +22,7 @@
     {% endblock cdn_css %}
 
     {% compress css %}
-
+        <link rel="stylesheet" href="{% static 'bower/components-bootstrap/less/bootstrap.less' %}" type="text/less">
         <link rel="stylesheet" href="{% static 'css/base.less' %}" type="text/less">
 
         {% block css %}
@@ -42,10 +42,11 @@
 
 <footer>
     {% block footer %}
-        <div class="container-fluid">
+    <!--    <div class="container-fluid">
             <hr>
-            <p>&copy; University of Washington 2014</p>
+            <p>&copy; University of Washington 2015</p>
         </div>
+        -->
     {% endblock footer %}
 </footer>
 

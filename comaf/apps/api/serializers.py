@@ -49,7 +49,7 @@ class PlotSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     #metric = MetricSerializer(required=False)
-    #owner = UserSerializer(required=False)
+    owner = UserSerializer(required=False)
 
     class Meta:
         model = metrics_models.Comment
