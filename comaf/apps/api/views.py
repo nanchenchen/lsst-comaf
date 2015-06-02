@@ -13,12 +13,12 @@ from rest_framework.parsers import FileUploadParser
 import comaf.apps.metrics.models as metrics_models
 from comaf.apps.api import serializers
 import os
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 import logging
 
 logger = logging.getLogger(__name__)
-
-
 
 class APIRoot(APIView):
     """
@@ -50,7 +50,8 @@ class MetricsView(APIView):
 
     def get(self, request, format=None):
         metrics = metrics_models.Metric.objects.all()
-        output = serializers.MetricsSerializer(metrics)
+        #output = serializers.MetricListSerializer(metrics)
+        output = serializers.MetricSerializer(metrics, many=True)
         return Response(output.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
@@ -78,3 +79,29 @@ class PlotView(APIView):
         # do some stuff with uploaded file
         # ...
         return Response(up_file.name, status.HTTP_201_CREATED)
+
+
+class CommentView(APIView):
+
+    def get(self, request, metric_id, format=None):
+        comments = metrics_models.Comment.objects.filter(metric__id=metric_id).all()
+        #data = {
+            #"metric": metrics_models.Metric.objects.get(id=metric_id),
+        #    "comments": comments}
+        output = serializers.CommentSerializer(comments, many=True)
+
+        return Response(output.data, status=status.HTTP_200_OK)
+        #return Response(output.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, metric_id, format=None):
+        input = serializers.CommentSerializer(data=request.data)
+        if input.is_valid():
+            text = input.validated_data['text']
+            metric = metrics_models.Metric.objects.get(id=metric_id)
+            user = User.objects.get(username='admin')
+            comment = metrics_models.Comment(metric=metric, owner=user, text=text)
+            comment.save()
+            output = serializers.CommentSerializer(comment)
+            return Response(output.data, status=status.HTTP_200_OK)
+
+        return Response(input.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 
 # Create your models here.
 
+
 class OpsimRun(models.Model):
     name = models.CharField(max_length=200)
     comment = models.TextField(null=True, blank=True, default="")
@@ -15,6 +16,7 @@ class OpsimRun(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     def __unicode__(self):
         return self.name
+
 
 class Metric(models.Model):
     name = models.CharField(max_length=200)
@@ -56,6 +58,7 @@ class Metric(models.Model):
 def get_image_path(instance, filename):
     return os.path.join('plots', filename)
 
+
 class Plot(models.Model):
     metric = models.ForeignKey(Metric, related_name="plots")
     type = models.CharField(max_length=128)
@@ -64,10 +67,18 @@ class Plot(models.Model):
     def __unicode__(self):
         return self.src.name
 
+
 class Stat(models.Model):
     metric = models.ForeignKey(Metric, related_name="stats")
     type = models.CharField(max_length=100)
     value = models.FloatField()
+
+
+class Comment(models.Model):
+    metric = models.ForeignKey(Metric, related_name="comments")
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    owner = models.ForeignKey(User)
+    text = models.TextField(null=True, blank=True, default="")
 
 
 def create_from_post(user_key, data):
