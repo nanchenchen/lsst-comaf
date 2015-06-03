@@ -64,8 +64,11 @@ class Plot(models.Model):
     type = models.CharField(max_length=128)
     src = models.FileField(upload_to=get_image_path, null=True, max_length=1024, storage=OverwriteStorage())
     thumb = models.ImageField(upload_to=get_image_path, null=True, max_length=1024, storage=OverwriteStorage())
+    ordering = ['type']
     def __unicode__(self):
         return self.src.name
+
+
 
 
 class Stat(models.Model):

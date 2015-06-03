@@ -387,7 +387,8 @@ INSTALLED_APPS += (
 )
 
 REST_FRAMEWORK = {
-    'VIEW_DESCRIPTION_FUNCTION': 'comaf.apps.api.drf.get_view_description'
+    'VIEW_DESCRIPTION_FUNCTION': 'comaf.apps.api.drf.get_view_description',
+    'DEFAULT_PAGINATION_CLASS':  'comaf.apps.base.utils.paginator.CustomPagination',
 }
 ######### END REST FRAMEWORK
 

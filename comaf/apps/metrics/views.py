@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView
 from comaf.apps.base.views import LoginRequiredMixin
 import comaf.apps.metrics.models as metrics_models
 
@@ -14,3 +14,19 @@ class MetricDetailView(LoginRequiredMixin, DetailView):
         context = super(MetricDetailView, self).get_context_data(**kwargs)
         context['plots'] = context['metric'].get_plots_in_order()
         return context
+
+class MetricListView(LoginRequiredMixin, ListView):
+    """View for viewing projects"""
+    #model = metrics_models.Metric
+    template_name = 'metric_list.html'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = metrics_models.Metric.objects.all()
+        queryset = queryset.filter(owner=self.request.user)
+        return queryset
+
+    #def get_context_data(self, **kwargs):
+    #    context = super(MetricDetailView, self).get_context_data(**kwargs)
+    #    context['plots'] = context['metric'].get_plots_in_order()
+    #    return context

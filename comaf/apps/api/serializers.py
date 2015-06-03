@@ -18,16 +18,23 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'is_staff',)
+        fields = ('id', 'username', 'email',)
 
+
+class PlotSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = metrics_models.Plot
+        fields = ('metric', 'type', 'src', )
 
 class MetricSerializer(serializers.ModelSerializer):
-    #owner = UserSerializer(required=False)
-    #owner = UserSerializer()
+    owner = UserSerializer(required=False)
+    #plots = serializers.ListField(child=PlotSerializer(), required=False)
+    #plots = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    plots = PlotSerializer(many=True, required=False)
 
     class Meta:
         model = metrics_models.Metric
-        fields = ('id', 'name', 'owner', 'opsim_run', 'maf_comment', 'created_at', )
+        fields = ('id', 'name', 'owner', 'opsim_run', 'maf_comment', 'created_at', 'plots', )
 
 
 class MetricUploadSerializer(serializers.Serializer):
@@ -35,16 +42,7 @@ class MetricUploadSerializer(serializers.Serializer):
     data = MetricSerializer()
 
 
-class MetricListSerializer(serializers.Serializer):
-    metrics = serializers.ListField(child=MetricSerializer(), required=False)
 
-
-class PlotSerializer(serializers.ModelSerializer):
-    metric = MetricSerializer()
-
-    class Meta:
-        model = metrics_models.Plot
-        fields = ('metric', 'type', 'src')
 
 
 class CommentSerializer(serializers.ModelSerializer):

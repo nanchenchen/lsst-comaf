@@ -9,6 +9,7 @@ from django.core.urlresolvers import NoReverseMatch
 from rest_framework.reverse import reverse
 from rest_framework.compat import get_resolver_match, OrderedDict
 from rest_framework.parsers import FileUploadParser
+from rest_framework import viewsets
 
 import comaf.apps.metrics.models as metrics_models
 from comaf.apps.api import serializers
@@ -46,13 +47,19 @@ class APIRoot(APIView):
 
         return Response(ret)
 
-class MetricsView(APIView):
+class MetricsView(viewsets.ModelViewSet):
+    #queryset = metrics_models.Metric.objects.all()
+    serializer_class = serializers.MetricSerializer
+    paginate_by = 10
 
-    def get(self, request, format=None):
-        metrics = metrics_models.Metric.objects.all()
-        #output = serializers.MetricListSerializer(metrics)
-        output = serializers.MetricSerializer(metrics, many=True)
-        return Response(output.data, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        queryset = metrics_models.Metric.objects.all()
+        params = self.request.query_params
+        if params.get("user"):
+            owner_id = params.get("user")
+            queryset = queryset.filter(owner__id=owner_id)
+
+        return queryset
 
     def post(self, request, format=None):
         input = serializers.MetricUploadSerializer(data=request.data)
@@ -98,7 +105,7 @@ class CommentView(APIView):
         if input.is_valid():
             text = input.validated_data['text']
             metric = metrics_models.Metric.objects.get(id=metric_id)
-            user = User.objects.get(username='admin')
+            user = User.objects.get(id=self.request.user.id)
             comment = metrics_models.Comment(metric=metric, owner=user, text=text)
             comment.save()
             output = serializers.CommentSerializer(comment)

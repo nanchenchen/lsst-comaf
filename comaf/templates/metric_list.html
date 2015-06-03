@@ -1,0 +1,71 @@
+{% extends "_layouts/base.html" %}
+{% load staticfiles djangular_tags %}
+
+{% block js %}
+{{ block.super }}
+<script src="{% static 'bower/angular/angular.js' %}"></script>
+<script src="{% static 'bower/angular-cookies/angular-cookies.js' %}"></script>
+<script src="{% static 'js/metric_comments.js' %}"></script>
+{% endblock %}
+{% block css %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/metric_list.less' %}" type="text/less">
+{% endblock %}
+
+{% block page_title %}Metric List{% endblock %}
+{% block body_class %}metric-list{% endblock %}
+
+{% block content %}
+
+    {% if is_paginated %}
+        <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="{% url 'metric_list' %}?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="{% url 'metric_list' %}?page={{ page_obj.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+
+    <div class="clear"></div>
+
+    {% for metric in object_list %}
+    <a href="{% url 'metric'  metric.id %}">
+        <div class="metric">
+            <div class="title">{{ metric.opsim_run.name }} <br /> {{ metric.name }}</div>
+             {{ metric.metadata }}
+            <br />
+            <div class="plots">
+                {% with metric.get_plots_in_order|first as plot %}
+                    <img src="{{ MEDIA_URL }}{{ plot.thumb.name }}" />
+                {% endwith %}
+            </div>
+            {{ metric.maf_comment }}
+        </div>
+    </a>
+    {% endfor %}
+    <div class="clear"></div>
+
+    {% if is_paginated %}
+        <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="{% url 'metric_list' %}?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="{% url 'metric_list' %}?page={{ page_obj.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+
+{% endblock %}

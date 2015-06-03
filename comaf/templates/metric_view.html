@@ -19,10 +19,15 @@
 
 <div id="content-wrap" ng-app="metric-comments">
     <div id="metric-wrap">
-        <div>{{ metric.opsim_run.name }} > {{ metric.display_group }} > {{ metric.display_subgroup }}</div>
-        <h1>{{ metric.name }}</h1>
-        <div>{{ metric.metadata }}</div>
+
+        <h2>{{ metric.opsim_run.name }} / {{ metric.name }}</h2>
+        <div>{{ metric.display_group }} / {{ metric.display_subgroup }}</div>
+        {% if metric.metadata %}
+            <div>{{ metric.metadata }}</div>
+        {% endif %}
+        {% if metric.display_caption != "NULL" %}
         <div id="caption">{{ metric.display_caption }}</div>
+        {% endif %}
 
         <div id="plots">
             {% for plot in plots %}
@@ -44,7 +49,7 @@
         <hr />
         <form>
             Add a comment: <br />
-            <textarea id="new-comment" cols="50" rows="4"  class="form-control" ng-model="comment_text"></textarea> <br/>
+            <textarea id="new-comment" cols="50" rows="3"  class="form-control" ng-model="comment_text"></textarea> <br/>
             <button class="btn btn-primary" ng-click="add_a_comment()">Submit</button>
             <input type="reset" class="btn btn-defalut" value="Reset">
         </form>

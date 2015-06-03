@@ -10,5 +10,8 @@ urlpatterns = patterns('comaf.apps.metrics.views',
                        url(r'^(?P<pk>\d+)/$',
                            views.MetricDetailView.as_view(),
                            name='metric'),
+                       url(r'$',
+                           views.MetricListView.as_view(),
+                           name='metric_list'),
 
 )
