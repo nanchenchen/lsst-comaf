@@ -44,7 +44,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       v.memory = 2048
     end
     
-    config.vm.provider :virtualbox do |vb|
-    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-end
+	#config.vm.provider :virtualbox do |v|
+	#	v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+	#	v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+	#end
+	
 end

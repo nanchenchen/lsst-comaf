@@ -59,7 +59,6 @@ target/
 /.vagrant
 /.env*
 /node_modules
-/msgvis/static/bower
 /assets
 *.sqlite
 *.iml
