@@ -1,6 +1,6 @@
 -r base.txt
 
--r nlp.txt
+#-r nlp.txt
 
 gunicorn
 django-supervisor

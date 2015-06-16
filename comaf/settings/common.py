@@ -228,6 +228,7 @@ DJANGO_APPS = (
 
     # Utilities
     'django_extensions',
+    'widget_tweaks',
 )
 
 # Apps specific for this project go here.

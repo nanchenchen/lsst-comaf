@@ -2,7 +2,7 @@ from comaf.settings.common import *
 
 DEV = False
 
-DEBUG_TEMPLATE = DEBUG
+DEBUG_TEMPLATE = bool(False) 
 
 COMPRESS_ENABLED = bool(get_env_setting('COMPRESS_ENABLED', True))
 COMPRESS_OFFLINE = bool(get_env_setting('COMPRESS_OFFLINE', True))
@@ -16,7 +16,7 @@ INSTALLED_APPS += (
 
 SUPERVISOR_LOG_MAXBYTES = '50MB'
 SUPERVISOR_LOG_BACKUPS = 10
-WSGI_MODULE = 'msgvis.wsgi'
+WSGI_MODULE = 'comaf.wsgi'
 GUNICORN_CONF = PROJECT_ROOT / 'gunicorn.conf.py'
 SUPERVISOR_PIDFILE = LOGS_ROOT / 'supervisord.pid'
 # End supervisord settings
