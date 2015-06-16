@@ -37,7 +37,13 @@
     <a href="/metric">
         <h1>MAF Results Collection Site</h1>
     </a>
-
+    <div class="log-in-out">
+        {% if user.is_authenticated %}
+        <a href="/accounts/logout"><button class="btn btn-success">logout</button></a>
+        {% else %}
+        <a href="/accounts/login/?next={{ request.get_full_path }}"><button class="btn btn-success">login</button></a>
+        {% endif %}
+    </div>
     <div class="container-fluid content">
         {% block content %}{% endblock %}
     </div>

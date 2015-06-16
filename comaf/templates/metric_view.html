@@ -20,6 +20,7 @@
     <div id="metric-wrap">
 
         <h2>{{ metric.opsim_run.name }} / {{ metric.name }}</h2>
+
         <div>{{ metric.display_group }} / {{ metric.display_subgroup }}</div>
         {% if metric.metadata %}
             <div>{{ metric.metadata }}</div>
@@ -35,23 +36,31 @@
             </a>
             {% endfor %}
         </div>
+        <div id="owner"> Uploaded by <a href="{% url 'metric_user_list' metric.owner.username %}">{{ metric.owner.username }}</a></div>
     </div>
     <div id="comment-wrap" ng-controller="CommentsController">
         <h3>Comments</h3>
         <div id="comments" >
             <div class='comment-entry' ng-repeat="comment in comments">
-                <strong><span class="comment-user">{$ comment.owner.username $}</span></strong>
+                <!-- TODO: change to django-angular url -->
+                <strong><span class="comment-user"><a href="/metric/user/{$ comment.owner.username $}">{$ comment.owner.username $}</a></span></strong>
                 <span class="comment-time">{$ comment.created_at | date:'yyyy-MM-dd HH:mm:ss' $}</span> <br/>
                 <span class="comment-text">{$ comment.text $}</span> <br />
             </div>
         </div>
+
         <hr />
         <form>
             Add a comment: <br />
+            {% if user.is_authenticated %}
             <textarea id="new-comment" cols="50" rows="3"  class="form-control" ng-model="comment_text"></textarea> <br/>
             <button class="btn btn-primary" ng-click="add_a_comment()">Submit</button>
             <input type="reset" class="btn btn-defalut" value="Reset">
+            {% else %}
+            <strong>Please <a href="/accounts/login/?next={{ request.get_full_path }}">login</a> to make comments!</strong>
+            {% endif %}
         </form>
+
     </div>
 </div>
 

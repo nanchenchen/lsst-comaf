@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'comaf.views.home', name='home'),
+
     # url(r'^blog/', include('blog.urls')),
 
 
